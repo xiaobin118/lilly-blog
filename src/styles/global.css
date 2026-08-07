@@ -1,0 +1,80 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --color-bg-light: #ffffff;
+  --color-bg-dark: #16171d;
+  --color-card-light: #f8f8f8;
+  --color-card-dark: #1f2028;
+  --color-text-light: #4b5563;
+  --color-text-dark: #9ca3af;
+  --color-heading-light: #111827;
+  --color-heading-dark: #f3f4f6;
+  --color-border-light: #e5e7eb;
+  --color-border-dark: #2e303a;
+  --color-accent-light: #aa3bff;
+  --color-accent-dark: #c084fc;
+}
+
+@layer base {
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    background-color: var(--color-bg-light);
+    color: var(--color-text-light);
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  .dark body {
+    background-color: var(--color-bg-dark);
+    color: var(--color-text-dark);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    body { transition: none; }
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-card-light dark:bg-card-dark rounded-2xl border border-border-light dark:border-border-dark;
+  }
+}
+
+/* Scroll-reveal animation (driven by IntersectionObserver in BaseLayout) */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+[data-reveal].reveal-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Page-transition (View Transitions) subtle fade+slide */
+::view-transition-old(root) {
+  animation: vt-out 0.25s ease both;
+}
+::view-transition-new(root) {
+  animation: vt-in 0.35s ease both;
+}
+@keyframes vt-out {
+  to { opacity: 0; transform: translateY(-8px); }
+}
+@keyframes vt-in {
+  from { opacity: 0; transform: translateY(12px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}

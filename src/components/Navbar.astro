@@ -1,0 +1,39 @@
+---
+const base = import.meta.env.BASE_URL;
+const navItems = [
+  { href: base, label: 'Home' },
+  { href: `${base}archive`, label: 'Archive' },
+  { href: `${base}about`, label: 'About' },
+  { href: 'https://github.com/xiaobin118', label: 'GitHub', external: true },
+];
+---
+<nav class="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-bg-light/80 dark:bg-bg-dark/80 border-b border-border-light dark:border-border-dark">
+  <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+    <a href={base} class="text-lg font-bold text-heading-light dark:text-heading-dark">Lilly</a>
+    <div class="flex items-center gap-4">
+      {
+        navItems.map((item) =>
+          item.external ? (
+            <a href={item.href} target="_blank" rel="noopener noreferrer" class="text-sm text-text-light dark:text-text-dark hover:text-heading-light dark:hover:text-heading-dark transition-colors">{item.label}</a>
+          ) : (
+            <a href={item.href} class="text-sm text-text-light dark:text-text-dark hover:text-heading-light dark:hover:text-heading-dark transition-colors">{item.label}</a>
+          )
+        )
+      }
+      <button id="theme-toggle" aria-label="Toggle theme" class="p-2 rounded-full text-text-light dark:text-text-dark hover:bg-card-light dark:hover:bg-card-dark transition-colors cursor-pointer">
+        <span id="theme-icon">🌙</span>
+      </button>
+    </div>
+  </div>
+</nav>
+<script>
+  const btn = document.getElementById('theme-toggle');
+  const icon = document.getElementById('theme-icon');
+  if (document.documentElement.classList.contains('dark')) icon.textContent = '☀️';
+  btn.addEventListener('click', () => {
+    const root = document.documentElement;
+    const dark = root.classList.toggle('dark');
+    localStorage.setItem('theme', dark ? 'dark' : 'light');
+    icon.textContent = dark ? '☀️' : '🌙';
+  });
+</script>

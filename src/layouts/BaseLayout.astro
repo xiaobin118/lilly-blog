@@ -1,0 +1,60 @@
+---
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import RandomBackground from '../components/RandomBackground.astro';
+import { ClientRouter } from 'astro:transitions';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+const { title, description = "Lilly's Blog" } = Astro.props;
+---
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <ClientRouter />
+    <script is:inline>
+      (function () {
+        const stored = localStorage.getItem('theme');
+        const dark = stored === 'dark' || (!stored && matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.classList.toggle('dark', dark);
+      })();
+    </script>
+  </head>
+  <body class="relative">
+    <RandomBackground />
+    <Navbar />
+    <main class="min-h-svh pt-16">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>
+<script>
+  // Scroll-reveal: fade elements in as they enter the viewport. Runs on first
+  // load and again after every ClientRouter view transition (astro:page-load).
+  function initReveal() {
+    const els = document.querySelectorAll('[data-reveal]:not(.reveal-visible)');
+    if (!els.length) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('reveal-visible');
+            io.unobserve(entry.target);
+          }
+        }
+      },
+      { threshold: 0.1, rootMargin: '0px 0px -10% 0px' }
+    );
+    els.forEach((el) => io.observe(el));
+  }
+  initReveal();
+  document.addEventListener('astro:page-load', initReveal);
+</script>

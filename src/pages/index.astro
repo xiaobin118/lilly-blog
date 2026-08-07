@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const base = import.meta.env.BASE_URL;
+const posts = (await getCollection('blog')).sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+---
+<BaseLayout title="Lilly's Blog">
+  <div class="relative max-w-6xl mx-auto px-4 py-8">
+    <section class="mb-8">
+      <h1 class="text-3xl font-bold text-heading-light dark:text-heading-dark">Hi there, I'm a programmer from HIT.</h1>
+      <p class="mt-2 text-text-light dark:text-text-dark">I love music and anime, hope you can find something interesting here!</p>
+    </section>
+    <section class="flex flex-col gap-4">
+      {
+        posts.map((post, i) => (
+          <a href={`${base}post/${post.id}`} class="card p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group" data-reveal style={`transition-delay: ${i * 80}ms`}>
+            <div class="flex items-start justify-between gap-4 mb-2">
+              <h2 class="text-lg font-semibold text-heading-light dark:text-heading-dark group-hover:text-accent-light dark:group-hover:text-accent-dark transition-colors">{post.data.title}</h2>
+              <time class="text-sm text-text-light dark:text-text-dark shrink-0">{post.data.date.toLocaleDateString('zh-CN')}</time>
+            </div>
+            <p class="text-sm text-text-light dark:text-text-dark line-clamp-2">{post.data.description}</p>
+            <div class="flex flex-wrap gap-2 mt-3">
+              {post.data.tags.map((tag) => (
+                <span class="px-2.5 py-0.5 text-xs rounded-full bg-accent-light/10 dark:bg-accent-dark/10 text-accent-light dark:text-accent-dark">{tag}</span>
+              ))}
+            </div>
+          </a>
+        ))
+      }
+    </section>
+  </div>
+</BaseLayout>

@@ -1,0 +1,11 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+const base = import.meta.env.BASE_URL;
+---
+<BaseLayout title="404 - Not Found">
+  <div class="max-w-6xl mx-auto px-4 py-20 text-center">
+    <h1 class="text-3xl font-bold text-heading-light dark:text-heading-dark">404</h1>
+    <p class="mt-4 text-text-light dark:text-text-dark">页面不存在</p>
+    <a href={base} class="mt-6 inline-block text-accent-light dark:text-accent-dark hover:underline">返回首页</a>
+  </div>
+</BaseLayout>
