@@ -333,7 +333,7 @@ delete game;                            // ← 危险！
       ↓ 先调 ~SlotMachine()（释放 wheels）
       ↓ 再自动调 ~CasinoGame()（基类部分）
       ↓ 完整清理，零泄漏
-``
+```
 
 #### C 语言类比
 

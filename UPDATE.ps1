@@ -98,8 +98,9 @@ tags: [$tagsJoined]
 
 # 7. 写入博客目录(文件名即 slug)
 $destFile = Join-Path $PSScriptRoot "src\content\blog\$slug.md"
-Set-Content -LiteralPath $destFile -Value $content -Encoding UTF8 -NoNewline
-$isUpdate = Test-Path -LiteralPath $destFile
+# UTF-8 无 BOM(PS 5.1 的 -Encoding UTF8 会写 BOM,可能干扰 frontmatter 解析)
+$utf8NoBom = [System.Text.UTF8Encoding]::new($false)
+[System.IO.File]::WriteAllText($destFile, $content, $utf8NoBom)
 Write-Host "已写入: $destFile"
 
 # 8. 构建验证

@@ -27,13 +27,18 @@ const navItems = [
   </div>
 </nav>
 <script>
-  const btn = document.getElementById('theme-toggle');
-  const icon = document.getElementById('theme-icon');
-  if (document.documentElement.classList.contains('dark')) icon.textContent = '☀️';
-  btn.addEventListener('click', () => {
+  // Event delegation: survives ClientRouter view transitions, which swap the
+  // DOM after the first load and leave direct listeners attached to dead nodes.
+  function syncIcon() {
+    const icon = document.getElementById('theme-icon');
+    if (icon) icon.textContent = document.documentElement.classList.contains('dark') ? '☀️' : '🌙';
+  }
+  syncIcon();
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('#theme-toggle')) return;
     const root = document.documentElement;
     const dark = root.classList.toggle('dark');
     localStorage.setItem('theme', dark ? 'dark' : 'light');
-    icon.textContent = dark ? '☀️' : '🌙';
+    syncIcon();
   });
 </script>
