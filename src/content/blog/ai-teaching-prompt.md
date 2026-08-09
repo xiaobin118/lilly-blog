@@ -2,7 +2,7 @@
 title: "AI 教学提示词模板"
 description: "可复用的 AI 增量教学 prompt 模板"
 date: 2026-08-07
-tags: [ai, learning]
+tags: [ai, learning, prompt]
 ---
 
 # AI 教学提示词模板

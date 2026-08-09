@@ -99,7 +99,8 @@ g++ -std=c++17 main.cpp -o main.exe
 
 C++ 中 `struct` 和 `class` 几乎一样，**唯一的区别是默认访问权限**：
 
-| | `struct` | `class`|
+
+| --- | `struct` | `class`|
 |---|---|---|
 | 默认访问权限 | `public` | `private` |
 
