@@ -325,15 +325,15 @@ delete game;                            // ← 危险！
     delete game;
       ↓ 编译器只看 game 的类型是 CasinoGame*
       ↓ 静态绑定 → 只调 ~CasinoGame()
-      ↓ 但基类没有 wheels → wheels 永远不释放 → 内存泄漏 💥
+      ↓ 但基类没有 wheels → wheels 永远不释放 → 内存泄漏
 
 有 virtual 时：
     delete game;
       ↓ 虚函数机制 → 查虚函数表 → 找到真身 SlotMachine
-      ↓ 先调 ~SlotMachine()（释放 wheels）✅
-      ↓ 再自动调 ~CasinoGame()（基类部分）✅
+      ↓ 先调 ~SlotMachine()（释放 wheels）
+      ↓ 再自动调 ~CasinoGame()（基类部分）
       ↓ 完整清理，零泄漏
-```
+``
 
 #### C 语言类比
 
@@ -368,8 +368,8 @@ C++:       没有 GC。delete 是你自己写的，必须确保它调用"最深�
 #### 记忆图
 
 ```
-没有虚析构:  delete game → 只清基类部分 ← 子类资源泄漏 💥
-有虚析构:    delete game → 先清子类 → 再清基类 → 干净 ✅
+没有虚析构:  delete game → 只清基类部分 ← 子类资源泄漏
+有虚析构:    delete game → 先清子类 → 再清基类 → 干净
 ```
 
 ---
