@@ -2,7 +2,7 @@
 title: "CGPA 计算器 — C++ 项目教程"
 description: "通过构建 CGPA 计算器从零学习 C++ 核心知识"
 date: 2026-08-07
-tags: [cpp, tutorial]
+tags: [cpp, tutorial, project]
 ---
 
 # CGPA 计算器 — C++ 项目教程
