@@ -149,8 +149,8 @@ C:       malloc() → 用 → free()          ← 忘了 free = 内存泄漏
 
 ```cpp
 unique_ptr<CasinoGame> a = make_unique<NumberGuessingGame>();
-unique_ptr<CasinoGame> b = a;   // ❌ 编译错误！不能复制
-unique_ptr<CasinoGame> b = std::move(a);  // ✅ 转移所有权，a 变空
+unique_ptr<CasinoGame> b = a;   // 错误：编译错误！不能复制
+unique_ptr<CasinoGame> b = std::move(a);  // 正确：转移所有权，a 变空
 ```
 
 - **独占所有权**：任何时候只有一个人"拥有"对象
@@ -162,7 +162,7 @@ unique_ptr<CasinoGame> b = std::move(a);  // ✅ 转移所有权，a 变空
 
 | # | 错误 | 正确 | 学到的概念 |
 |---|------|------|-----------|
-| 1 | `srand()` 放在函数里 | 放 `main()`，只调用一次 | 同一秒播种相同 → 相同"随机"数 |
+| 1 | `srand()` 放在函数里 | 放 `main()`，只调用一次 | 同一秒播种 → 相同"随机"数 |
 | 2 | `.cpp` 里重复定义 struct | 头文件定义一次，.cpp 只 include | 声明 vs 定义 |
 | 3 | 漏写 `public:` | 继承类的成员默认 private | 访问控制符 |
 | 4 | 头文件没有 `#pragma once` | 加 `#pragma once` | header guard |
@@ -405,7 +405,7 @@ make        → 实际调用 g++ 编译
 
 ## 8. 已学 vs 未学
 
-### 已学 ✅
+### 已学
 
 面向对象：封装、继承、多态、抽象基类、虚函数、纯虚函数、虚析构、override
 STL：vector、count_if、accumulate、max_element、lambda
@@ -415,7 +415,7 @@ STL：vector、count_if、accumulate、max_element、lambda
 序列化：nlohmann/json（toJson/fromJson）
 工程：多文件、CMake、clangd 配置、返回 bool 报告成败
 
-### 未学 ⬜（候选）
+### 未学（候选）
 
 ```
 STL 容器:      std::map（类比 Python dict）
@@ -506,7 +506,7 @@ double maxPrize = std::max_element(history.begin(), history.end(),
 | `Game Result&` 编译错误 | 类名拼错，多了空格 | `GameResult&` |
 | `int maxPrize` 丢小数 | prize 是 double | 金额一律用 double |
 | `j["history"] = history` 失败 | 机制 A vs 机制 B | 手动遍历 + toJson() |
-| 读档后显示"玩家1" | if/else 只写了 else 分支，漏了 `player = defaultPlayer` | 补上加载分支 |
+| 读档后显示"玩家1" | if/else 只写了 if 分支，漏了 else 从存档加载 | 补上加载分支 |
 | 存档被覆盖成默认玩家 | 读档失败时退出存档覆盖好数据 | 设计漏洞，见下 |
 
 ### 9.5 设计教训

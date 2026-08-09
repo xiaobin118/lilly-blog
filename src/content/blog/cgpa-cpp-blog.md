@@ -193,7 +193,7 @@ std::sort(m_courses.begin(), m_courses.end(),
 
 整个过程最值得借鉴的一点：**让 AI 一步步给你小任务，自己动手写，写错了再一起分析，而不是让它把整个项目一次性写出来。**
 
-我把这次的教学方式整理成了一个可复用的 prompt 模板，下次做别的项目可以直接用：
+我把这次的教学方式整理成了[一个可复用的 prompt 模板](../ai-teaching-prompt/)，下次做别的项目可以直接用：
 
 ```
 不要一次性写完所有代码，每一步只教一个新概念，让我自己动手写，
@@ -204,4 +204,4 @@ std::sort(m_courses.begin(), m_courses.end(),
 
 - `include/` + `src/`：完整的 Course、Semester、main 代码
 - `TUTORIAL.md`：分步教程，每个知识点配代码和讲解
-- `TEACHING_PROMPT.md`：可复用的 AI 教学 prompt 模板
+- [AI 教学提示词模板](../ai-teaching-prompt/)：可复用的 AI 教学 prompt（原 `TEACHING_PROMPT.md`）
