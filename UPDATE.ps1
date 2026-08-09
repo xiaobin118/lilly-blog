@@ -1,17 +1,25 @@
 <#
 .SYNOPSIS
-  添加一篇 Markdown 文章到静态博客并自动部署。
+  发布或更新静态博客文章,构建验证后自动推送部署。
 .DESCRIPTION
-  用法: .\UPDATE.ps1 <文章.md> [-Tags a,b] [-Title "标题"] [-Date 2026-08-07]
-  - 若无 frontmatter,自动根据标题/日期/标签生成
-  - 复制到 src/content/blog/<文件名>.md(文件名即 URL slug)
-  - npm run build 验证 → git commit → push origin main(GitHub Actions 自动发布)
+  两种用法:
+  1) 新增/更新文章(带参数):
+     .\UPDATE.ps1 <文章.md> [-Tags a,b] [-Title "标题"] [-Date 2026-08-07]
+     - 若无 frontmatter,自动根据标题/日期/标签生成
+     - 复制到 src/content/blog/<文件名>.md(文件名即 URL slug)
+     - 若文件名与已有文章相同,则覆盖更新
+  2) 检测博客内改动(无参数):
+     .\UPDATE.ps1
+     - 检测 src/content/blog 的未提交改动(直接编辑文章文本后运行)
+     - 构建验证 → 提交 → 推送
 .EXAMPLE
   .\UPDATE.ps1 .\posts\how-i-learned-cpp.md -Tags cpp,learning
+  # 直接编辑了 src/content/blog/*.md 后:
+  .\UPDATE.ps1
 #>
 param(
-  [Parameter(Mandatory = $true, Position = 0)]
-  [string]$ArticlePath,
+  [Parameter(Position = 0)]
+  [string]$ArticlePath = '',
   [string]$Title = '',
   [string]$Tags = 'blog',
   [string]$Date = (Get-Date -Format 'yyyy-MM-dd')
@@ -20,6 +28,32 @@ param(
 $ErrorActionPreference = 'Stop'
 Set-Location $PSScriptRoot
 
+# ========== 模式 2: 检测博客内改动并推送 ==========
+if (-not $ArticlePath) {
+  $changed = git status --porcelain -- src/content/blog/
+  if (-not $changed) {
+    Write-Host "src/content/blog 没有未提交的改动,无需更新。"
+    exit 0
+  }
+  Write-Host "检测到以下改动:"
+  $changed
+  $files = @($changed | ForEach-Object { ($_ -split '\s+', 2)[1].Trim() })
+  $msg = if ($files.Count -eq 1) {
+    "post: update $([System.IO.Path]::GetFileNameWithoutExtension($files[0]))"
+  } else {
+    "chore: update $($files.Count) blog posts"
+  }
+  Write-Host "`n=== 构建验证 ==="
+  npm run build
+  if ($LASTEXITCODE -ne 0) { throw "构建失败,未提交/推送。请检查文章内容。" }
+  git add src/content/blog/
+  git commit -m $msg
+  git push origin main
+  Write-Host "`n已推送博客更新: $msg"
+  exit 0
+}
+
+# ========== 模式 1: 新增 / 覆盖更新文章 ==========
 # 1. 验证文章文件
 if (-not (Test-Path -LiteralPath $ArticlePath)) { throw "找不到文件: $ArticlePath" }
 if ((Get-Item -LiteralPath $ArticlePath).Extension -ne '.md') { throw "必须是 .md 文件" }
@@ -65,6 +99,7 @@ tags: [$tagsJoined]
 # 7. 写入博客目录(文件名即 slug)
 $destFile = Join-Path $PSScriptRoot "src\content\blog\$slug.md"
 Set-Content -LiteralPath $destFile -Value $content -Encoding UTF8 -NoNewline
+$isUpdate = Test-Path -LiteralPath $destFile
 Write-Host "已写入: $destFile"
 
 # 8. 构建验证
