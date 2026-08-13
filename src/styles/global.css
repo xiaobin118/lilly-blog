@@ -14,7 +14,7 @@
   --color-heading-dark: #f3f4f6;
   --color-border-light: #e5e7eb;
   --color-border-dark: #2e303a;
-  --color-accent-light: #aa3bff;
+  --color-accent-light: #a129e6; /* ~5.3:1 on white, passes WCAG AA for small text */
   --color-accent-dark: #c084fc;
 }
 

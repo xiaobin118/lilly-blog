@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://xiaobin118.github.io/lilly-blog/sitemap.xml

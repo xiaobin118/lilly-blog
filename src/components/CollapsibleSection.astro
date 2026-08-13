@@ -1,5 +1,14 @@
 ---
-const { section } = Astro.props;
+interface Section {
+  id: string;
+  icon: string;
+  title: string;
+  items: { title: string; detail: string }[];
+}
+interface Props {
+  section: Section;
+}
+const { section }: Props = Astro.props;
 const id = `panel-${section.id}`;
 ---
 <div class="card overflow-hidden transition-colors duration-300 hover:shadow-lg" data-reveal>
@@ -33,14 +42,18 @@ const id = `panel-${section.id}`;
 <script>
   // Event delegation: survives ClientRouter view transitions, which swap the
   // DOM after the first visit and leave direct listeners attached to dead nodes.
-  document.addEventListener('click', (e) => {
-    const btn = e.target.closest('[data-collapsible]');
+  document.addEventListener('click', (e: Event) => {
+    const target = e.target as Element | null;
+    const btn = target?.closest('[data-collapsible]');
     if (!btn) return;
-    const panel = document.getElementById(btn.getAttribute('aria-controls'));
+    const controls = btn.getAttribute('aria-controls');
+    if (!controls) return;
+    const panel = document.getElementById(controls);
+    if (!panel) return;
     const expanded = btn.getAttribute('aria-expanded') === 'true';
     btn.setAttribute('aria-expanded', String(!expanded));
     panel.hidden = expanded;
-    const chevron = btn.querySelector('.chevron');
+    const chevron = btn.querySelector<HTMLElement>('.chevron');
     if (chevron) chevron.style.transform = expanded ? 'rotate(0deg)' : 'rotate(180deg)';
   });
 </script>

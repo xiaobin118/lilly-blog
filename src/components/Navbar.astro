@@ -34,8 +34,9 @@ const navItems = [
     if (icon) icon.textContent = document.documentElement.classList.contains('dark') ? '☀️' : '🌙';
   }
   syncIcon();
-  document.addEventListener('click', (e) => {
-    if (!e.target.closest('#theme-toggle')) return;
+  document.addEventListener('click', (e: Event) => {
+    const target = e.target as Element | null;
+    if (!target?.closest('#theme-toggle')) return;
     const root = document.documentElement;
     const dark = root.classList.toggle('dark');
     localStorage.setItem('theme', dark ? 'dark' : 'light');

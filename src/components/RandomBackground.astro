@@ -21,8 +21,11 @@ const aboutImages = [
 ];
 
 // Astro generates trailing-slash URLs (/lilly-blog/archive/), so strip the
-// base and trailing slash before matching the page.
-const clean = Astro.url.pathname.replace(new RegExp(`^${base}`), '').replace(/\/$/, '');
+// base and surrounding slashes before matching the page.
+const page = Astro.url.pathname.startsWith(base)
+  ? Astro.url.pathname.slice(base.length)
+  : Astro.url.pathname;
+const clean = page.replace(/^\/+|\/+$/g, '');
 let pool: string[];
 if (clean === 'about') {
   pool = aboutImages;
@@ -35,5 +38,5 @@ const bg = pool[Math.floor(Math.random() * pool.length)];
 ---
 <div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
   <div class="absolute inset-0 bg-bg-light dark:bg-bg-dark" />
-  <img src={bg} alt="" class="absolute inset-0 w-full h-full object-cover opacity-40 dark:opacity-30" />
+  <img src={bg} alt="" loading="lazy" fetchpriority="low" class="absolute inset-0 w-full h-full object-cover opacity-40 dark:opacity-30" />
 </div>
