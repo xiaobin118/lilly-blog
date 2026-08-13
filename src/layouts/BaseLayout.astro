@@ -36,9 +36,16 @@ const ogImage = new URL(`${base}og-image.webp`, Astro.site).href;
     <ClientRouter />
     <script is:inline>
       (function () {
-        const stored = localStorage.getItem('theme');
-        const dark = stored === 'dark' || (!stored && matchMedia('(prefers-color-scheme: dark)').matches);
-        document.documentElement.classList.toggle('dark', dark);
+        function applyTheme() {
+          const stored = localStorage.getItem('theme');
+          const dark = stored === 'dark' || (!stored && matchMedia('(prefers-color-scheme: dark)').matches);
+          document.documentElement.classList.toggle('dark', dark);
+        }
+        applyTheme();
+        // View transitions replace <html> attributes (dropping the .dark class),
+        // and the inline script is not re-run on navigation, so re-apply the theme
+        // after every ClientRouter page load.
+        document.addEventListener('astro:page-load', applyTheme);
       })();
     </script>
   </head>
