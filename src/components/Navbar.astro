@@ -24,7 +24,7 @@ const isActive = (href: string) => {
           const active = !item.external && isActive(item.href);
           const cls = `text-sm transition-colors ${
             active
-              ? 'text-accent-light dark:text-accent-dark font-semibold'
+              ? 'text-heading-light dark:text-heading-dark font-medium underline decoration-accent-light dark:decoration-accent-dark decoration-2 underline-offset-8'
               : 'text-text-light dark:text-text-dark hover:text-heading-light dark:hover:text-heading-dark'
           }`;
           return item.external ? (
