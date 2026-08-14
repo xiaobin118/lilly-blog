@@ -7,7 +7,6 @@ type: note
 topic: "Git"
 ---
 
-# Git 命令速查 — 从发布博客学 Git
 
 ## 1. 先看发布流程：两条路
 
