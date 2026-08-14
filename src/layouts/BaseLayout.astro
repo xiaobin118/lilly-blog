@@ -65,6 +65,11 @@ const ogImage = new URL(`${base}og-image.webp`, Astro.site).href;
   function initReveal() {
     const els = document.querySelectorAll('[data-reveal]:not(.reveal-visible)');
     if (!els.length) return;
+    // Fallback: never leave content invisible if IO is unavailable.
+    if (!('IntersectionObserver' in window)) {
+      els.forEach((el) => el.classList.add('reveal-visible'));
+      return;
+    }
     const io = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {

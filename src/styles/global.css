@@ -4,15 +4,16 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --color-bg-light: #ffffff;
+  /* Warm "paper" light palette */
+  --color-bg-light: #f1efe7;
   --color-bg-dark: #16171d;
-  --color-card-light: #f8f8f8;
+  --color-card-light: #fbfbfb;
   --color-card-dark: #1f2028;
-  --color-text-light: #4b5563;
+  --color-text-light: #5b564e;
   --color-text-dark: #9ca3af;
-  --color-heading-light: #111827;
+  --color-heading-light: #2b2622;
   --color-heading-dark: #f3f4f6;
-  --color-border-light: #e5e7eb;
+  --color-border-light: #e7e1d2;
   --color-border-dark: #2e303a;
   --color-accent-light: #a129e6; /* ~5.3:1 on white, passes WCAG AA for small text */
   --color-accent-dark: #c084fc;
@@ -37,8 +38,23 @@
 }
 
 @layer components {
+  /* Unified page container for all list pages */
+  .page {
+    @apply relative max-w-6xl mx-auto px-4 py-8;
+  }
   .card {
     @apply bg-card-light dark:bg-card-dark rounded-2xl border border-border-light dark:border-border-dark;
+  }
+  /* Muted metadata pill for tags; accent appears on hover */
+  .tag {
+    @apply inline-flex items-center px-2.5 py-0.5 text-xs font-medium rounded-full
+      border border-border-light dark:border-border-dark
+      bg-bg-light/60 dark:bg-bg-dark/60
+      text-text-light dark:text-text-dark
+      transition-colors;
+  }
+  .tag:hover {
+    @apply text-accent-light dark:text-accent-dark border-accent-light/40 dark:border-accent-dark/40;
   }
 }
 

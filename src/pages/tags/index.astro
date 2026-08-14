@@ -11,22 +11,49 @@ for (const post of posts) {
     tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
   }
 }
-const tags = Array.from(tagCounts.entries()).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+const all = Array.from(tagCounts.entries()).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+const popular = all.filter(([, count]) => count >= 2);
 ---
 <BaseLayout title="Tags | Lilly's Blog">
-  <div class="relative max-w-6xl mx-auto px-4 py-8">
+  <div class="page">
     <h1 class="text-3xl font-bold text-heading-light dark:text-heading-dark mb-8">Tags</h1>
-    <div class="flex flex-wrap gap-3">
-      {
-        tags.map(([tag, count]) => (
-          <a
-            href={`${base}tags/${slugifyTag(tag)}/`}
-            class="px-3 py-1.5 text-sm rounded-full bg-accent-light/10 dark:bg-accent-dark/10 text-accent-light dark:text-accent-dark hover:bg-accent-light/20 dark:hover:bg-accent-dark/20 transition-colors"
-          >
-            {tag} <span class="opacity-70">({count})</span>
-          </a>
-        ))
-      }
-    </div>
+
+    {
+      popular.length > 0 && (
+        <section class="mb-10">
+          <h2 class="text-sm font-semibold uppercase tracking-wider text-text-light dark:text-text-dark mb-4">Popular</h2>
+          <div class="flex flex-wrap gap-3">
+            {
+              popular.map(([tag, count]) => (
+                <a
+                  href={`${base}tags/${slugifyTag(tag)}/`}
+                  class="card px-4 py-2 text-sm font-medium text-heading-light dark:text-heading-dark hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
+                >
+                  {tag}
+                  <span class="ml-2 text-xs text-text-light dark:text-text-dark">({count})</span>
+                </a>
+              ))
+            }
+          </div>
+        </section>
+      )
+    }
+
+    <section>
+      <h2 class="text-sm font-semibold uppercase tracking-wider text-text-light dark:text-text-dark mb-4">All tags</h2>
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+        {
+          all.map(([tag, count]) => (
+            <a
+              href={`${base}tags/${slugifyTag(tag)}/`}
+              class="card p-4 flex items-center justify-between hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group"
+            >
+              <span class="text-sm font-medium text-heading-light dark:text-heading-dark group-hover:text-accent-light dark:group-hover:text-accent-dark transition-colors">{tag}</span>
+              <span class="text-xs text-text-light dark:text-text-dark">{count}</span>
+            </a>
+          ))
+        }
+      </div>
+    </section>
   </div>
 </BaseLayout>
