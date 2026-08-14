@@ -2,9 +2,18 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://xiaobin118.github.io/lilly-blog/</loc></url>
   <url><loc>https://xiaobin118.github.io/lilly-blog/archive/</loc></url>
+  <url><loc>https://xiaobin118.github.io/lilly-blog/tags/</loc></url>
   <url><loc>https://xiaobin118.github.io/lilly-blog/about/</loc></url>
   <url><loc>https://xiaobin118.github.io/lilly-blog/post/ai-teaching-prompt/</loc></url>
   <url><loc>https://xiaobin118.github.io/lilly-blog/post/cgpa-cpp-blog/</loc></url>
   <url><loc>https://xiaobin118.github.io/lilly-blog/post/cgpa-cpp-tutorial/</loc></url>
   <url><loc>https://xiaobin118.github.io/lilly-blog/post/build-your-casino-project-step-by-step/</loc></url>
+  <url><loc>https://xiaobin118.github.io/lilly-blog/tags/ai/</loc></url>
+  <url><loc>https://xiaobin118.github.io/lilly-blog/tags/ai-tutorial/</loc></url>
+  <url><loc>https://xiaobin118.github.io/lilly-blog/tags/c++/</loc></url>
+  <url><loc>https://xiaobin118.github.io/lilly-blog/tags/cpp/</loc></url>
+  <url><loc>https://xiaobin118.github.io/lilly-blog/tags/learning/</loc></url>
+  <url><loc>https://xiaobin118.github.io/lilly-blog/tags/project/</loc></url>
+  <url><loc>https://xiaobin118.github.io/lilly-blog/tags/prompt/</loc></url>
+  <url><loc>https://xiaobin118.github.io/lilly-blog/tags/tutorial/</loc></url>
 </urlset>

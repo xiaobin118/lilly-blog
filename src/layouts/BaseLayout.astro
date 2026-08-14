@@ -33,6 +33,7 @@ const ogImage = new URL(`${base}og-image.webp`, Astro.site).href;
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
+    <link rel="alternate" type="application/rss+xml" title="Lilly's Blog" href={`${base}rss.xml`} />
     <ClientRouter />
     <script is:inline>
       (function () {
@@ -79,4 +80,56 @@ const ogImage = new URL(`${base}og-image.webp`, Astro.site).href;
   }
   initReveal();
   document.addEventListener('astro:page-load', initReveal);
+
+  async function copyText(text: string) {
+    try {
+      if (navigator.clipboard?.writeText) await navigator.clipboard.writeText(text);
+      else throw new Error('no clipboard');
+    } catch {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      ta.remove();
+    }
+  }
+
+  // Add copy button + language label to every Shiki code block. Re-runs on
+  // astro:page-load for newly swapped-in code.
+  function initCodeBlocks() {
+    document.querySelectorAll<HTMLElement>('pre.astro-code').forEach((pre) => {
+      if (pre.dataset.enhanced) return;
+      pre.dataset.enhanced = '1';
+      pre.classList.add('code-enhanced');
+
+      const code = pre.querySelector('code');
+      const lang = pre.getAttribute('data-language');
+      if (lang) {
+        const label = document.createElement('span');
+        label.className = 'code-lang';
+        label.textContent = lang;
+        pre.appendChild(label);
+      }
+      const copyBtn = document.createElement('button');
+      copyBtn.type = 'button';
+      copyBtn.className = 'code-copy';
+      copyBtn.setAttribute('aria-label', 'Copy code');
+      copyBtn.textContent = 'Copy';
+      copyBtn.addEventListener('click', async () => {
+        const lines = code
+          ? [...code.querySelectorAll('.line')].map((l) => l.textContent).join('\n')
+          : '';
+        if (!lines) return;
+        await copyText(lines);
+        copyBtn.textContent = 'Copied';
+        setTimeout(() => (copyBtn.textContent = 'Copy'), 1500);
+      });
+      pre.appendChild(copyBtn);
+    });
+  }
+  initCodeBlocks();
+  document.addEventListener('astro:page-load', initCodeBlocks);
 </script>

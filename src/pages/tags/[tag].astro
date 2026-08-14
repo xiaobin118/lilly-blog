@@ -1,0 +1,41 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { slugifyTag } from '../../lib/tags';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  // slug -> canonical tag name (first tag that maps to the slug)
+  const tags = new Map<string, string>();
+  for (const post of posts) {
+    for (const tag of post.data.tags) tags.set(slugifyTag(tag), tag);
+  }
+  return Array.from(tags.entries()).map(([slug, tag]) => ({ params: { tag: slug }, props: { tag } }));
+}
+
+const { tag } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const posts = (await getCollection('blog'))
+  .filter((post) => post.data.tags.some((t) => slugifyTag(t) === tag))
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+---
+<BaseLayout title={`${tag} | Tags | Lilly's Blog`}>
+  <div class="relative max-w-6xl mx-auto px-4 py-8">
+    <a href={`${base}tags/`} class="inline-flex items-center gap-1 text-sm text-accent-light dark:text-accent-dark hover:underline mb-6">← 全部标签</a>
+    <h1 class="text-3xl font-bold text-heading-light dark:text-heading-dark mb-2">Tag: {tag}</h1>
+    <p class="text-sm text-text-light dark:text-text-dark mb-8">{posts.length} articles</p>
+    <div class="flex flex-col gap-4">
+      {
+        posts.map((post) => (
+          <a href={`${base}post/${post.id}/`} class="card p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group" data-reveal>
+            <div class="flex items-start justify-between gap-4 mb-2">
+              <h2 class="text-lg font-semibold text-heading-light dark:text-heading-dark group-hover:text-accent-light dark:group-hover:text-accent-dark transition-colors">{post.data.title}</h2>
+              <time datetime={post.data.date.toISOString()} class="text-sm text-text-light dark:text-text-dark shrink-0">{post.data.date.toLocaleDateString('zh-CN')}</time>
+            </div>
+            {post.data.description && <p class="text-sm text-text-light dark:text-text-dark line-clamp-2">{post.data.description}</p>}
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</BaseLayout>
