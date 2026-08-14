@@ -2,6 +2,7 @@
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 import RandomBackground from '../components/RandomBackground.astro';
+import CommandPalette from '../components/CommandPalette.astro';
 import { ClientRouter } from 'astro:transitions';
 import '../styles/global.css';
 
@@ -57,6 +58,7 @@ const ogImage = new URL(`${base}og-image.webp`, Astro.site).href;
       <slot />
     </main>
     <Footer />
+    <CommandPalette />
   </body>
 </html>
 <script>

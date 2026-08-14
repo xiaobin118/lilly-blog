@@ -1,0 +1,44 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+
+const notes = (await getCollection('blog'))
+  .filter((post) => post.data.type === 'note')
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+const byTopic = new Map<string, CollectionEntry<'blog'>[]>();
+for (const note of notes) {
+  const topic = note.data.topic ?? note.data.tags[0] ?? '其他';
+  const group = byTopic.get(topic) ?? [];
+  group.push(note);
+  byTopic.set(topic, group);
+}
+const topics = Array.from(byTopic.entries()).sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]));
+---
+<BaseLayout title="Notes | Lilly's Blog">
+  <div class="page">
+    <h1 class="text-3xl font-bold text-heading-light dark:text-heading-dark mb-2">学习笔记</h1>
+    <p class="text-sm text-text-light dark:text-text-dark mb-8">按主题整理的学习笔记，随学习持续更新。</p>
+
+    {
+      notes.length === 0 && (
+        <div class="card p-12 text-center">
+          <p class="text-lg font-medium text-heading-light dark:text-heading-dark">还没有笔记</p>
+          <p class="text-sm text-text-light dark:text-text-dark mt-2">在 frontmatter 中加 <code class="text-accent-light dark:text-accent-dark">type: note</code> 和 <code class="text-accent-light dark:text-accent-dark">topic</code> 即可收录到这里。</p>
+        </div>
+      )
+    }
+
+    {
+      topics.map(([topic, group]) => (
+        <section class="mb-10">
+          <h2 class="section-title mb-4">{topic}</h2>
+          <div class="flex flex-col gap-5">
+            {group.map((note, i) => <ArticleCard post={note} delay={i * 60} />)}
+          </div>
+        </section>
+      ))
+    }
+  </div>
+</BaseLayout>
