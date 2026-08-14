@@ -78,8 +78,10 @@
 .toc-link.toc-active { color: var(--color-accent-light); }
 .dark .toc-link.toc-active { color: var(--color-accent-dark); }
 
-/* Code block line numbers + copy button (see BaseLayout initCodeBlocks) */
-pre.astro-code { position: relative; }
+/* Code block line numbers + copy button (see BaseLayout initCodeBlocks).
+   The button/label live in a .code-block wrapper (sibling of the scrollable
+   <pre>) so they never move when the code scrolls horizontally. */
+.code-block { position: relative; }
 pre.astro-code.code-enhanced > code { display: block; padding-top: 1.9rem; }
 pre.astro-code code { counter-reset: ln; }
 pre.astro-code .line::before {
@@ -121,10 +123,25 @@ pre.astro-code .line::before {
   opacity: 0.5;
   transition: opacity 0.2s ease;
 }
-pre.astro-code:hover .code-copy,
+.code-block:hover .code-copy,
 .code-copy:hover,
 .code-copy:focus-visible { opacity: 1; }
 .code-copy:hover { background: rgba(255, 255, 255, 0.18); }
+
+/* Scrollbars: subtle site-wide + dark-theme match for code blocks */
+* { scrollbar-width: thin; scrollbar-color: var(--color-border-light) transparent; }
+.dark * { scrollbar-color: var(--color-border-dark) transparent; }
+*::-webkit-scrollbar { width: 8px; height: 8px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb { background: var(--color-border-light); border-radius: 4px; }
+*::-webkit-scrollbar-thumb:hover { background: var(--color-text-light); }
+.dark *::-webkit-scrollbar-thumb { background: var(--color-border-dark); }
+.dark *::-webkit-scrollbar-thumb:hover { background: var(--color-text-dark); }
+pre.astro-code { scrollbar-color: rgba(225, 228, 232, 0.3) transparent; }
+pre.astro-code::-webkit-scrollbar { width: 8px; height: 8px; }
+pre.astro-code::-webkit-scrollbar-track { background: transparent; }
+pre.astro-code::-webkit-scrollbar-thumb { background: rgba(225, 228, 232, 0.3); border-radius: 4px; }
+pre.astro-code::-webkit-scrollbar-thumb:hover { background: rgba(225, 228, 232, 0.5); }
 
 [data-reveal] {
   opacity: 0;

@@ -103,12 +103,19 @@ const ogImage = new URL(`${base}og-image.webp`, Astro.site).href;
   }
 
   // Add copy button + language label to every Shiki code block. Re-runs on
-  // astro:page-load for newly swapped-in code.
+  // astro:page-load for newly swapped-in code. The button/label are placed in
+  // a wrapper around the <pre> (siblings of the scrollable pre) so they stay
+  // fixed when the code scrolls horizontally.
   function initCodeBlocks() {
     document.querySelectorAll<HTMLElement>('pre.astro-code').forEach((pre) => {
       if (pre.dataset.enhanced) return;
       pre.dataset.enhanced = '1';
       pre.classList.add('code-enhanced');
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'code-block';
+      pre.parentNode!.insertBefore(wrapper, pre);
+      wrapper.appendChild(pre);
 
       const code = pre.querySelector('code');
       const lang = pre.getAttribute('data-language');
@@ -116,7 +123,7 @@ const ogImage = new URL(`${base}og-image.webp`, Astro.site).href;
         const label = document.createElement('span');
         label.className = 'code-lang';
         label.textContent = lang;
-        pre.appendChild(label);
+        wrapper.appendChild(label);
       }
       const copyBtn = document.createElement('button');
       copyBtn.type = 'button';
@@ -132,7 +139,7 @@ const ogImage = new URL(`${base}og-image.webp`, Astro.site).href;
         copyBtn.textContent = 'Copied';
         setTimeout(() => (copyBtn.textContent = 'Copy'), 1500);
       });
-      pre.appendChild(copyBtn);
+      wrapper.appendChild(copyBtn);
     });
   }
   initCodeBlocks();

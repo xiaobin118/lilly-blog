@@ -107,7 +107,7 @@ const related = (await getCollection('blog'))
       </div>
       {
         toc.length > 0 && (
-          <aside class="hidden lg:block sticky top-20">
+          <aside class="hidden lg:block sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto pr-1">
             <nav class="card p-4">
               <h2 class="text-sm font-semibold text-heading-light dark:text-heading-dark">On this page</h2>
               <div class="mt-3 flex flex-col gap-1.5 text-sm">
