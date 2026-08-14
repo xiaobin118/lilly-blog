@@ -37,68 +37,95 @@ const related = (await getCollection('blog'))
       url: new URL(Astro.url.pathname, Astro.site).href,
     })}
   />
-  <div class="relative max-w-4xl mx-auto px-4 py-8">
+  <div class="page">
     <div id="reading-progress" class="fixed top-0 left-0 h-0.5 bg-accent-light dark:bg-accent-dark z-[60] w-0" aria-hidden="true"></div>
-    <a href={base} class="inline-flex items-center gap-1 text-sm text-accent-light dark:text-accent-dark hover:underline mb-6">← 返回文章列表</a>
-    {
-      toc.length > 0 && (
-        <details class="card p-4 mb-6" open>
-          <summary class="text-sm font-semibold text-heading-light dark:text-heading-dark cursor-pointer select-none">On this page</summary>
-          <nav class="mt-3 flex flex-col gap-1.5 text-sm">
-            {
-              toc.map((h) => (
-                <a
-                  href={`#${h.slug}`}
-                  class="toc-link text-text-light dark:text-text-dark hover:text-accent-light dark:hover:text-accent-dark transition-colors"
-                  style={`padding-left: ${(h.depth - 2) * 12}px`}
-                >{h.text}</a>
-              ))
-            }
-          </nav>
-        </details>
-      )
-    }
-    <article class="card p-8 md:p-12">
-      <header class="mb-8 pb-6 border-b border-border-light dark:border-border-dark">
-        <h1 class="text-3xl md:text-4xl font-bold text-heading-light dark:text-heading-dark">{post.data.title}</h1>
-        <div class="flex items-center gap-4 mt-4 flex-wrap">
-          <time datetime={post.data.date.toISOString()} class="text-sm text-text-light dark:text-text-dark">{post.data.date.toLocaleDateString('zh-CN')}</time>
-          <span class="text-sm text-text-light dark:text-text-dark">· {readMinutes} min read</span>
-          <div class="flex flex-wrap gap-2">
-            {post.data.tags.map((tag) => (
-              <a href={`${base}tags/${slugifyTag(tag)}/`} class="tag">{tag}</a>
-            ))}
+    <a href={base} class="inline-flex items-center gap-1.5 text-sm font-medium text-accent-light dark:text-accent-dark hover:text-heading-light dark:hover:text-heading-dark transition-colors mb-6 group">
+      <svg class="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 12H5" /><path d="m12 19-7-7 7-7" /></svg>
+      返回文章列表
+    </a>
+    <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_280px] gap-6 lg:gap-8 items-start">
+      <div class="min-w-0">
+        {
+          toc.length > 0 && (
+            <details class="card p-4 mb-6 lg:hidden" open>
+              <summary class="text-sm font-semibold text-heading-light dark:text-heading-dark cursor-pointer select-none">On this page</summary>
+              <nav class="mt-3 flex flex-col gap-1.5 text-sm">
+                {
+                  toc.map((h) => (
+                    <a
+                      href={`#${h.slug}`}
+                      class="toc-link text-text-light dark:text-text-dark hover:text-accent-light dark:hover:text-accent-dark transition-colors"
+                      style={`padding-left: ${(h.depth - 2) * 12}px`}
+                    >{h.text}</a>
+                  ))
+                }
+              </nav>
+            </details>
+          )
+        }
+        <article class="card p-8 md:p-12">
+          <header class="mb-8 pb-6 border-b border-border-light dark:border-border-dark">
+            <h1 class="text-3xl md:text-4xl font-bold text-heading-light dark:text-heading-dark">{post.data.title}</h1>
+            <div class="flex items-center gap-4 mt-4 flex-wrap">
+              <time datetime={post.data.date.toISOString()} class="text-sm text-text-light dark:text-text-dark">{post.data.date.toLocaleDateString('zh-CN')}</time>
+              <span class="text-sm text-text-light dark:text-text-dark">· {readMinutes} min read</span>
+              <div class="flex flex-wrap gap-2">
+                {post.data.tags.map((tag) => (
+                  <a href={`${base}tags/${slugifyTag(tag)}/`} class="tag">{tag}</a>
+                ))}
+              </div>
+            </div>
+          </header>
+          <div class="prose prose-lg max-w-none dark:prose-invert">
+            <Content />
           </div>
-        </div>
-      </header>
-      <div class="prose prose-lg max-w-none dark:prose-invert">
-        <Content />
+        </article>
+        {
+          related.length > 0 && (
+            <section class="mt-8">
+              <h2 class="text-xl font-bold text-heading-light dark:text-heading-dark mb-4">相关文章</h2>
+              <div class="flex flex-col gap-3">
+                {
+                  related.map((p) => (
+                    <a href={`${base}post/${p.id}/`} class="card p-4 hover:shadow-md transition-shadow duration-300 block group">
+                      <div class="flex items-start justify-between gap-3">
+                        <h3 class="text-base font-medium text-heading-light dark:text-heading-dark group-hover:text-accent-light dark:group-hover:text-accent-dark transition-colors">{p.data.title}</h3>
+                        <time datetime={p.data.date.toISOString()} class="text-xs text-text-light dark:text-text-dark shrink-0">{p.data.date.toLocaleDateString('zh-CN')}</time>
+                      </div>
+                      <div class="flex flex-wrap gap-1.5 mt-2">
+                        {p.data.tags.map((tag) => (
+                          <span class="tag">{tag}</span>
+                        ))}
+                      </div>
+                    </a>
+                  ))
+                }
+              </div>
+            </section>
+          )
+        }
       </div>
-    </article>
-    {
-      related.length > 0 && (
-        <section class="mt-8">
-          <h2 class="text-xl font-bold text-heading-light dark:text-heading-dark mb-4">相关文章</h2>
-          <div class="flex flex-col gap-3">
-            {
-              related.map((p) => (
-                <a href={`${base}post/${p.id}/`} class="card p-4 hover:shadow-md transition-shadow duration-300 block group">
-                  <div class="flex items-start justify-between gap-3">
-                    <h3 class="text-base font-medium text-heading-light dark:text-heading-dark group-hover:text-accent-light dark:group-hover:text-accent-dark transition-colors">{p.data.title}</h3>
-                    <time datetime={p.data.date.toISOString()} class="text-xs text-text-light dark:text-text-dark shrink-0">{p.data.date.toLocaleDateString('zh-CN')}</time>
-                  </div>
-                  <div class="flex flex-wrap gap-1.5 mt-2">
-                    {p.data.tags.map((tag) => (
-                      <span class="tag">{tag}</span>
-                    ))}
-                  </div>
-                </a>
-              ))
-            }
-          </div>
-        </section>
-      )
-    }
+      {
+        toc.length > 0 && (
+          <aside class="hidden lg:block sticky top-20">
+            <nav class="card p-4">
+              <h2 class="text-sm font-semibold text-heading-light dark:text-heading-dark">On this page</h2>
+              <div class="mt-3 flex flex-col gap-1.5 text-sm">
+                {
+                  toc.map((h) => (
+                    <a
+                      href={`#${h.slug}`}
+                      class="toc-link text-text-light dark:text-text-dark hover:text-accent-light dark:hover:text-accent-dark transition-colors"
+                      style={`padding-left: ${(h.depth - 2) * 12}px`}
+                    >{h.text}</a>
+                  ))
+                }
+              </div>
+            </nav>
+          </aside>
+        )
+      }
+    </div>
   </div>
 </BaseLayout>
 <script>

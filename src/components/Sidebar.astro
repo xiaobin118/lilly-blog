@@ -3,6 +3,8 @@ import { getCollection } from 'astro:content';
 import { slugifyTag } from '../lib/tags';
 
 const base = import.meta.env.BASE_URL;
+const ghUsername = 'xiaobin118';
+
 const posts = await getCollection('blog');
 const tagCounts = new Map<string, number>();
 for (const post of posts) {
@@ -11,6 +13,49 @@ for (const post of posts) {
   }
 }
 const popular = Array.from(tagCounts.entries()).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).slice(0, 8);
+
+// Recent GitHub repos, fetched at build time (falls back to a profile link).
+const langColors: Record<string, string> = {
+  TypeScript: '#3178c6',
+  JavaScript: '#f1e05a',
+  'C++': '#f34b7d',
+  'C#': '#178600',
+  HTML: '#e34c26',
+  CSS: '#663399',
+  Python: '#3572A5',
+  Astro: '#ff5a03',
+  Java: '#b07219',
+  Shell: '#89e051',
+};
+interface Repo {
+  name: string;
+  description: string | null;
+  language: string | null;
+  htmlUrl: string;
+  stars: number;
+}
+let repos: Repo[] = [];
+try {
+  const res = await fetch(`https://api.github.com/users/${ghUsername}/repos?sort=updated&per_page=4&type=owner`);
+  if (res.ok) {
+    const data = (await res.json()) as Array<{
+      name: string;
+      description: string | null;
+      language: string | null;
+      html_url: string;
+      stargazers_count: number | null;
+    }>;
+    repos = data.map((r) => ({
+      name: r.name,
+      description: r.description,
+      language: r.language,
+      htmlUrl: r.html_url,
+      stars: r.stargazers_count ?? 0,
+    }));
+  }
+} catch {
+  repos = [];
+}
 ---
 <aside class="flex flex-col gap-6">
   <div class="card p-4" data-reveal>
@@ -52,29 +97,45 @@ const popular = Array.from(tagCounts.entries()).sort((a, b) => b[1] - a[1] || a[
       <span class="w-1 h-4 rounded-full bg-accent-light dark:bg-accent-dark"></span>近期项目
     </h2>
     <div class="flex flex-col gap-1">
-      <a href="https://github.com/xiaobin118/lilly-blog" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-bg-light/60 dark:hover:bg-bg-dark/60 transition-colors">
-        <span class="w-9 h-9 shrink-0 rounded-full bg-accent-light/15 dark:bg-accent-dark/15 text-accent-light dark:text-accent-dark flex items-center justify-center text-sm font-bold">&lt;/&gt;</span>
-        <span class="min-w-0">
-          <span class="block text-sm font-medium text-heading-light dark:text-heading-dark truncate">Personal Blog</span>
-          <span class="block text-xs text-text-light dark:text-text-dark truncate">Astro · TypeScript · Tailwind</span>
-        </span>
-      </a>
-      <a href="https://github.com/xiaobin118" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-bg-light/60 dark:hover:bg-bg-dark/60 transition-colors">
-        <span class="w-9 h-9 shrink-0 rounded-full bg-[#d1fae5]/70 dark:bg-[#0f3d2e] text-[#0d9488] dark:text-[#5eead4] flex items-center justify-center text-sm">🎮</span>
-        <span class="min-w-0">
-          <span class="block text-sm font-medium text-heading-light dark:text-heading-dark truncate">Unity 2D Game</span>
-          <span class="block text-xs text-text-light dark:text-text-dark truncate">Unity · C#</span>
-        </span>
-      </a>
+      {
+        repos.length > 0 ? (
+          repos.map((repo) => (
+            <a href={repo.htmlUrl} target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-bg-light/60 dark:hover:bg-bg-dark/60 transition-colors">
+              <span class="w-9 h-9 shrink-0 rounded-full bg-accent-light/15 dark:bg-accent-dark/15 text-accent-light dark:text-accent-dark flex items-center justify-center text-xs font-bold">&lt;/&gt;</span>
+              <span class="min-w-0 flex-1">
+                <span class="block text-sm font-medium text-heading-light dark:text-heading-dark truncate">{repo.name}</span>
+                <span class="flex items-center gap-2 text-xs text-text-light dark:text-text-dark">
+                  {repo.language && (
+                    <span class="flex items-center gap-1">
+                      <span class="w-2 h-2 rounded-full" style={`background-color: ${langColors[repo.language] ?? '#8b949e'}`}></span>
+                      {repo.language}
+                    </span>
+                  )}
+                  {repo.stars > 0 && <span>★ {repo.stars}</span>}
+                </span>
+              </span>
+              <svg class="w-3.5 h-3.5 text-text-light dark:text-text-dark shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7" /><path d="M7 7h10v10" /></svg>
+            </a>
+          ))
+        ) : (
+          <a href={`https://github.com/${ghUsername}`} target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-bg-light/60 dark:hover:bg-bg-dark/60 transition-colors">
+            <span class="w-9 h-9 shrink-0 rounded-full bg-accent-light/15 dark:bg-accent-dark/15 text-accent-light dark:text-accent-dark flex items-center justify-center text-xs font-bold">&lt;/&gt;</span>
+            <span class="min-w-0">
+              <span class="block text-sm font-medium text-heading-light dark:text-heading-dark truncate">@{ghUsername} on GitHub</span>
+              <span class="block text-xs text-text-light dark:text-text-dark truncate">查看我的仓库</span>
+            </span>
+          </a>
+        )
+      }
     </div>
-    <a href="https://github.com/xiaobin118" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 mt-3 text-sm text-accent-light dark:text-accent-dark hover:underline">查看全部项目 →</a>
+    <a href={`https://github.com/${ghUsername}`} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 mt-3 text-sm text-accent-light dark:text-accent-dark hover:underline">查看全部项目 →</a>
   </section>
 </aside>
 <script>
   // Lightweight client-side filter for the article list on the same page.
   // Event delegation so it survives ClientRouter view transitions.
   document.addEventListener('input', (e: Event) => {
-    const input = (e.target as HTMLElement | null)?.closest('[data-search-input]');
+    const input = (e.target as HTMLElement | null)?.closest<HTMLInputElement>('[data-search-input]');
     if (!input) return;
     const scope = document.querySelector('[data-search-scope]');
     if (!scope) return;
