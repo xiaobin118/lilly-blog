@@ -9,8 +9,6 @@ topic: "Git"
 
 # Git 命令速查 — 从发布博客学 Git
 
-> 这篇笔记以「往这个博客发一篇笔记」为主线，把 Git 最常用的命令串起来讲。看完既能发布博客，也能应付大部分日常 Git 操作。
-
 ## 1. 先看发布流程：两条路
 
 ### 方式 A：脚本全自动（日常推荐）
@@ -24,9 +22,9 @@ topic: "Git"
 .\UPDATE.ps1
 ```
 
-脚本替你执行完整流程：生成 frontmatter → 复制到 `src/content/blog/` → `npm run build` 验证 → **commit → push** → GitHub Actions 自动部署。
+脚本执行完整流程：生成 frontmatter → 复制到 `src/content/blog/` → `npm run build` 验证 → **commit → push** → GitHub Actions 自动部署。
 
-### 方式 B：手动 Git（学 Git 就看这条）
+### 方式 B：手动 Git
 
 ```bash
 # 1. 编辑/新建文章：src/content/blog/xxx.md
@@ -40,7 +38,7 @@ git commit -m "post: xxx"
 git push origin main
 ```
 
-## 2. Git 的核心模型：三层 + 远端
+## 2. Git 模型
 
 ```
 工作区(磁盘文件) ──git add──> 暂存区(staging) ──git commit──> 本地仓库 ──git push──> 远端(origin/main)
@@ -52,8 +50,6 @@ git push origin main
 | 暂存区 | 准备好要提交的改动清单 | `git add` |
 | 本地仓库 | 提交历史 | `git commit` |
 | 远端 | GitHub 上的副本 | `git push` / `git pull` |
-
-**关键点**：`git push` 之前，所有改动都只在本地，线上看不到。这是「线上没更新」最常见的原因。
 
 ## 3. 常用命令分类速查
 
@@ -111,7 +107,7 @@ git pull origin main  # 拉取并合并（= fetch + merge）
 git push origin main  # 推送本地提交到远端
 ```
 
-## 4. 完整场景演练：发一篇笔记
+## 4. 发一篇笔记
 
 ```bash
 # ① 新建 src/content/blog/git-cheatsheet.md 并写内容
