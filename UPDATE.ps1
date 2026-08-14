@@ -4,16 +4,18 @@
 .DESCRIPTION
   两种用法:
   1) 新增/更新文章(带参数):
-     .\UPDATE.ps1 <文章.md> [-Tags a,b] [-Title "标题"] [-Date 2026-08-07]
-     - 若无 frontmatter,自动根据标题/日期/标签生成
+     .\UPDATE.ps1 <文章.md> [-Tags a,b] [-Title "标题"] [-Date 2026-08-07] [-Type article|note|project|research] [-Topic 主题]
+     - 若无 frontmatter,自动根据标题/日期/标签/类型/主题生成
      - 复制到 src/content/blog/<文件名>.md(文件名即 URL slug)
      - 若文件名与已有文章相同,则覆盖更新
+     - 笔记用 -Type note -Topic "C++" 就会收录到 /notes 页按主题分组
   2) 检测博客内改动(无参数):
      .\UPDATE.ps1
      - 检测 src/content/blog 的未提交改动(直接编辑文章文本后运行)
      - 构建验证 → 提交 → 推送
 .EXAMPLE
   .\UPDATE.ps1 .\posts\how-i-learned-cpp.md -Tags cpp,learning
+  .\UPDATE.ps1 .\notes\stl-vector.md -Type note -Topic "C++" -Tags cpp,stl
   # 直接编辑了 src/content/blog/*.md 后:
   .\UPDATE.ps1
 #>
@@ -22,7 +24,10 @@ param(
   [string]$ArticlePath = '',
   [string]$Title = '',
   [string]$Tags = 'blog',
-  [string]$Date = (Get-Date -Format 'yyyy-MM-dd')
+  [string]$Date = (Get-Date -Format 'yyyy-MM-dd'),
+  [ValidateSet('article', 'note', 'project', 'research')]
+  [string]$Type = 'article',
+  [string]$Topic = ''
 )
 
 $ErrorActionPreference = 'Stop'
@@ -83,17 +88,19 @@ if (-not $Title) {
 if (-not $hasFrontmatter) {
   $titleEscaped = $Title.Replace('"', '\"')
   $tagsJoined = (($Tags -split ',') | ForEach-Object { $_.Trim() } | Where-Object { $_ }) -join ', '
+  $topicLine = if ($Topic) { "`ntopic: `"$Topic`"" } else { '' }
   $fm = @"
 ---
 title: "$titleEscaped"
 date: $Date
 tags: [$tagsJoined]
+type: $Type$topicLine
 ---
 "@
   $content = $fm + "`n`n" + $trimmed
-  Write-Host "已自动生成 frontmatter(title=$Title, date=$Date, tags=[$tagsJoined])"
+  Write-Host "已自动生成 frontmatter(title=$Title, date=$Date, tags=[$tagsJoined], type=$Type$($(if ($Topic) { ", topic=$Topic" } else { '' })))"
 } else {
-  Write-Host "检测到已有 frontmatter,保留原样"
+  Write-Host "检测到已有 frontmatter,保留原样(若需改 type/topic,请手动编辑)"
 }
 
 # 7. 写入博客目录(文件名即 slug)
