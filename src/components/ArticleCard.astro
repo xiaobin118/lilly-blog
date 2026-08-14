@@ -10,16 +10,18 @@ interface Props {
 const { post, delay = 0 } = Astro.props;
 const base = import.meta.env.BASE_URL;
 const minutes = estimateReadTime(post.body ?? '');
+const postUrl = `${base}post/${post.id}/`;
 ---
-<a
-  href={`${base}post/${post.id}/`}
-  class="card p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group"
+<div
+  class="card p-6 relative hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group"
   data-reveal
   data-search-item
   style={`transition-delay: ${delay}ms`}
 >
   <div class="flex items-start justify-between gap-4 mb-2">
-    <h2 class="text-lg font-semibold text-heading-light dark:text-heading-dark group-hover:text-accent-light dark:group-hover:text-accent-dark transition-colors">{post.data.title}</h2>
+    <h2 class="text-lg font-semibold text-heading-light dark:text-heading-dark group-hover:text-accent-light dark:group-hover:text-accent-dark transition-colors">
+      <a href={postUrl} class="stretched-link">{post.data.title}</a>
+    </h2>
     <time datetime={post.data.date.toISOString()} class="text-sm text-text-light dark:text-text-dark shrink-0">{post.data.date.toLocaleDateString('zh-CN')}</time>
   </div>
   {post.data.description && (
@@ -28,7 +30,7 @@ const minutes = estimateReadTime(post.body ?? '');
   <div class="flex items-center justify-between gap-3 mt-4 flex-wrap">
     <div class="flex flex-wrap gap-2">
       {post.data.tags.map((tag) => (
-        <a href={`${base}tags/${slugifyTag(tag)}/`} class="tag">{tag}</a>
+        <a href={`${base}tags/${slugifyTag(tag)}/`} class="tag relative">{tag}</a>
       ))}
     </div>
     <div class="flex items-center gap-2 shrink-0">
@@ -36,4 +38,4 @@ const minutes = estimateReadTime(post.body ?? '');
       <span class="text-sm text-text-light dark:text-text-dark group-hover:text-accent-light dark:group-hover:text-accent-dark group-hover:translate-x-0.5 transition-all duration-200" aria-hidden="true">→</span>
     </div>
   </div>
-</a>
+</div>

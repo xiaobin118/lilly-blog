@@ -56,6 +56,13 @@
   .tag:hover {
     @apply bg-accent-light/25 dark:bg-accent-dark/25;
   }
+  /* Make an entire relative card clickable via the nearest link's ::after,
+     without nesting anchors (tags stay clickable with `relative`) */
+  .stretched-link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
   /* Section heading with a leading accent bar */
   .section-title {
     @apply flex items-center gap-2.5 text-xl font-bold text-heading-light dark:text-heading-dark;

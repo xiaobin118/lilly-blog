@@ -36,17 +36,19 @@ const yearGroups = Array.from(byYear.entries()).sort((a, b) => b[0] - a[0]);
                   <div class="relative group" data-reveal style={`transition-delay: ${i * 60}ms`}>
                     {/* Dot on timeline */}
                     <div class="absolute -left-[31px] top-3 w-3 h-3 rounded-full bg-accent-light dark:bg-accent-dark border-2 border-card-light dark:border-card-dark" />
-                    <a href={`${base}post/${entry.id}`} class="card p-4 hover:shadow-md transition-shadow duration-300 block">
+                    <div class="card p-4 relative hover:shadow-md transition-shadow duration-300">
                       <div class="flex items-start justify-between gap-3 mb-2">
-                        <h3 class="text-base font-medium text-heading-light dark:text-heading-dark group-hover:text-accent-light dark:group-hover:text-accent-dark transition-colors">{entry.data.title}</h3>
+                        <h3 class="text-base font-medium text-heading-light dark:text-heading-dark group-hover:text-accent-light dark:group-hover:text-accent-dark transition-colors">
+                          <a href={`${base}post/${entry.id}`} class="stretched-link">{entry.data.title}</a>
+                        </h3>
                         <time datetime={entry.data.date.toISOString()} class="text-xs text-text-light dark:text-text-dark shrink-0">{entry.data.date.toLocaleDateString('zh-CN')}</time>
                       </div>
                       <div class="flex flex-wrap gap-1.5">
                         {entry.data.tags.map((tag) => (
-                          <a href={`${base}tags/${slugifyTag(tag)}/`} class="tag">{tag}</a>
+                          <a href={`${base}tags/${slugifyTag(tag)}/`} class="tag relative">{tag}</a>
                         ))}
                       </div>
-                    </a>
+                    </div>
                   </div>
                 ))}
               </div>
