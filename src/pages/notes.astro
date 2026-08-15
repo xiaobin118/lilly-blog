@@ -35,7 +35,7 @@ const topics = Array.from(byTopic.entries()).sort((a, b) => b[1].length - a[1].l
         <section class="mb-10">
           <h2 class="section-title mb-4">{topic}</h2>
           <div class="flex flex-col gap-5">
-            {group.map((note, i) => <ArticleCard post={note} delay={i * 60} />)}
+            {group.map((note, i) => <ArticleCard post={note} delay={Math.min(i * 25, 75)} />)}
           </div>
         </section>
       ))

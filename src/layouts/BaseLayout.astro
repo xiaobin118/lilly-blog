@@ -36,6 +36,7 @@ const ogImage = new URL(`${base}og-image.webp`, Astro.site).href;
     <meta name="twitter:image" content={ogImage} />
     <link rel="alternate" type="application/rss+xml" title="Lilly's Blog" href={`${base}rss.xml`} />
     <ClientRouter />
+    <noscript><style>[data-reveal]{opacity:1 !important;transform:none !important;}</style></noscript>
     <script is:inline>
       (function () {
         function applyTheme() {
@@ -54,7 +55,7 @@ const ogImage = new URL(`${base}og-image.webp`, Astro.site).href;
   <body class="relative">
     <RandomBackground />
     <Navbar />
-    <main class="min-h-svh pt-16">
+    <main class="site-main min-h-svh pt-16">
       <slot />
     </main>
     <Footer />
@@ -62,8 +63,11 @@ const ogImage = new URL(`${base}og-image.webp`, Astro.site).href;
   </body>
 </html>
 <script>
-  // Scroll-reveal: fade elements in as they enter the viewport. Runs on first
-  // load and again after every ClientRouter view transition (astro:page-load).
+  // Content entrance. `[data-reveal]` starts hidden (see global.css) and is
+  // revealed by IntersectionObserver on the FIRST full load (scroll-reveal).
+  // On in-site navigation we materialize all pieces with a stagger instead —
+  // the new root snapshot stays empty (no monolithic block swap) while the
+  // background crossfades and the content paints in piecewise.
   function initReveal() {
     const els = document.querySelectorAll('[data-reveal]:not(.reveal-visible)');
     if (!els.length) return;
@@ -85,8 +89,27 @@ const ogImage = new URL(`${base}og-image.webp`, Astro.site).href;
     );
     els.forEach((el) => io.observe(el));
   }
+  let isFirstLoad = true;
+  document.addEventListener('astro:page-load', () => {
+    if (isFirstLoad) {
+      initReveal();
+      isFirstLoad = false;
+    } else {
+      // Navigation: phase the entrance AFTER the old content has faded out
+      // (base delay = --vt-content-out) and stagger by DOM order so visual
+      // anchors (page title) land before the cards below. transitionDelay is
+      // restored afterwards so hover transitions stay instant.
+      const els = [...document.querySelectorAll<HTMLElement>('[data-reveal]')];
+      const baseMs =
+        parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--vt-content-out')) || 160;
+      els.forEach((el, i) => {
+        el.style.transitionDelay = `${baseMs + Math.min(i, 8) * 20}ms`;
+        el.classList.add('reveal-visible');
+      });
+      setTimeout(() => els.forEach((el) => { el.style.transitionDelay = ''; }), 800);
+    }
+  });
   initReveal();
-  document.addEventListener('astro:page-load', initReveal);
 
   async function copyText(text: string) {
     try {

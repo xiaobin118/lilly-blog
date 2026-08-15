@@ -40,14 +40,14 @@ const sections = [
 <BaseLayout title="About | Lilly's Blog">
   <div class="page">
     <section class="card p-6 md:p-8 mb-6" data-reveal>
-      <h1 class="text-2xl font-bold text-heading-light dark:text-heading-dark">Lilly</h1>
+      <h1 class="text-3xl font-bold text-heading-light dark:text-heading-dark">Lilly</h1>
       <p class="mt-2 text-text-light dark:text-text-dark">Hi there, I'm a CS undergraduate from HIT. I love music and anime, hope you can find something interesting here!</p>
     </section>
 
     <section class="card p-6 md:p-8 mb-6" data-reveal>
       <h2 class="section-title mb-5">Tech Stack</h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-        <div class="rounded-2xl bg-bg-light/60 dark:bg-bg-dark/60 p-4">
+        <div class="panel p-4">
           <h3 class="text-sm font-semibold text-heading-light dark:text-heading-dark mb-2">正在学</h3>
           <div class="flex flex-wrap gap-2">
             <span class="tag">C++</span>
@@ -55,7 +55,7 @@ const sections = [
             <span class="tag">SQL</span>
           </div>
         </div>
-        <div class="rounded-2xl bg-bg-light/60 dark:bg-bg-dark/60 p-4">
+        <div class="panel p-4">
           <h3 class="text-sm font-semibold text-heading-light dark:text-heading-dark mb-2">在构建</h3>
           <ul class="text-sm text-text-light dark:text-text-dark space-y-1 list-none">
             <li>个人知识库（本博客）</li>
@@ -67,7 +67,7 @@ const sections = [
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {
           stack.map((group) => (
-            <div class="rounded-2xl bg-bg-light/60 dark:bg-bg-dark/60 p-4">
+            <div class="panel p-4">
               <h3 class="text-sm font-semibold text-heading-light dark:text-heading-dark mb-2">{group.title}</h3>
               <div class="flex flex-wrap gap-2">
                 {group.items.map((item) => <span class="tag">{item}</span>)}

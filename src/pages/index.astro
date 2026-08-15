@@ -21,22 +21,22 @@ const avgRead = posts.length
           <h1 class="text-3xl md:text-4xl font-bold text-heading-light dark:text-heading-dark">Hi there, I'm a programmer from HIT.</h1>
           <p class="mt-3 text-text-light dark:text-text-dark">I love music and anime, hope you can find something interesting here!</p>
           <div class="flex flex-wrap gap-3 mt-6">
-            <div class="flex items-center gap-3 px-4 py-3 rounded-2xl bg-bg-light/60 dark:bg-bg-dark/60">
+            <div class="panel flex items-center gap-3 px-4 py-3">
               <span class="w-9 h-9 shrink-0 rounded-full bg-accent-light/15 dark:bg-accent-dark/15 text-accent-light dark:text-accent-dark flex items-center justify-center text-base">📄</span>
               <div>
                 <div class="text-lg font-bold text-heading-light dark:text-heading-dark leading-none">{posts.length}</div>
                 <div class="text-xs text-text-light dark:text-text-dark mt-0.5">Articles</div>
               </div>
             </div>
-            <div class="flex items-center gap-3 px-4 py-3 rounded-2xl bg-bg-light/60 dark:bg-bg-dark/60">
-              <span class="w-9 h-9 shrink-0 rounded-full bg-[#d1fae5]/70 dark:bg-[#0f3d2e] text-[#0d9488] dark:text-[#5eead4] flex items-center justify-center text-base">🏷️</span>
+            <div class="panel flex items-center gap-3 px-4 py-3">
+              <span class="w-9 h-9 shrink-0 rounded-full bg-accent-light/15 dark:bg-accent-dark/15 text-accent-light dark:text-accent-dark flex items-center justify-center text-base">🏷️</span>
               <div>
                 <div class="text-lg font-bold text-heading-light dark:text-heading-dark leading-none">{tagCount}</div>
                 <div class="text-xs text-text-light dark:text-text-dark mt-0.5">Tags</div>
               </div>
             </div>
-            <div class="flex items-center gap-3 px-4 py-3 rounded-2xl bg-bg-light/60 dark:bg-bg-dark/60">
-              <span class="w-9 h-9 shrink-0 rounded-full bg-[#fef3c7]/80 dark:bg-[#3a2f0a] text-[#b45309] dark:text-[#fcd34d] flex items-center justify-center text-base">⏱️</span>
+            <div class="panel flex items-center gap-3 px-4 py-3">
+              <span class="w-9 h-9 shrink-0 rounded-full bg-accent-light/15 dark:bg-accent-dark/15 text-accent-light dark:text-accent-dark flex items-center justify-center text-base">⏱️</span>
               <div>
                 <div class="text-lg font-bold text-heading-light dark:text-heading-dark leading-none">{avgRead}</div>
                 <div class="text-xs text-text-light dark:text-text-dark mt-0.5">min · Avg. read</div>
@@ -48,7 +48,7 @@ const avgRead = posts.length
         <section>
           <h2 class="section-title mb-5">最新文章</h2>
           <div id="article-list" class="flex flex-col gap-5" data-search-scope>
-            {posts.map((post, i) => <ArticleCard post={post} delay={i * 80} />)}
+            {posts.map((post, i) => <ArticleCard post={post} delay={Math.min(i * 25, 75)} />)}
           </div>
           {posts.length === 0 && <p class="text-text-light dark:text-text-dark">还没有文章。</p>}
           <p id="search-empty" hidden class="text-sm text-text-light dark:text-text-dark">没有匹配的文章。</p>

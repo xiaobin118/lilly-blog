@@ -7,7 +7,7 @@ const base = import.meta.env.BASE_URL;
     <div class="card overflow-hidden shadow-xl">
       <div class="flex items-center gap-2.5 px-4 py-3 border-b border-border-light dark:border-border-dark">
         <svg class="w-4 h-4 text-text-light dark:text-text-dark shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" /></svg>
-        <input id="cmd-input" type="text" placeholder="搜索文章、笔记，或输入命令（> 开头）" class="flex-1 bg-transparent text-sm outline-none text-heading-light dark:text-heading-dark placeholder:text-text-light/70 dark:placeholder:text-text-dark/70" autocomplete="off" spellcheck="false" />
+        <input id="cmd-input" type="text" placeholder="搜索文章、笔记，或输入命令（> 开头）" class="flex-1 bg-transparent text-sm text-heading-light dark:text-heading-dark placeholder:text-text-light/70 dark:placeholder:text-text-dark/70" autocomplete="off" spellcheck="false" />
         <kbd class="px-1.5 py-0.5 text-[10px] font-medium rounded border border-border-light dark:border-border-dark text-text-light dark:text-text-dark shrink-0">Esc</kbd>
       </div>
       <ul id="cmd-results" class="max-h-[22rem] overflow-y-auto p-2"></ul>

@@ -5,177 +5,358 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  /* Warm "paper" light palette */
-  --color-bg-light: #f1efe7;
-  --color-bg-dark: #16171d;
-  --color-card-light: #fbfbfb;
-  --color-card-dark: #1f2028;
-  --color-text-light: #5b564e;
-  --color-text-dark: #9ca3af;
-  --color-heading-light: #2b2622;
-  --color-heading-dark: #f3f4f6;
-  --color-border-light: #e7e1d2;
-  --color-border-dark: #2e303a;
-  --color-accent-light: #a129e6; /* ~5.3:1 on white, passes WCAG AA for small text */
-  --color-accent-dark: #c084fc;
+    /* Warm "paper" light palette */
+    --color-bg-light: #f1efe7;
+    --color-bg-dark: #16171d;
+    --color-card-light: #fbfbfb;
+    --color-card-dark: #1f2028;
+    --color-text-light: #5b564e;
+    --color-text-dark: #9ca3af;
+    --color-heading-light: #2b2622;
+    --color-heading-dark: #f3f4f6;
+    --color-border-light: #e7e1d2;
+    --color-border-dark: #2e303a;
+    --color-accent-light: #a8510f; /* warm amber ~5.2:1 on paper, passes WCAG AA */
+    --color-accent-dark: #c084fc;
+
+    /* CJK-aware font stacks */
+    --font-sans: "Segoe UI", system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    --font-display: "Noto Serif SC", "Songti SC", "STSong", SimSun, Georgia, "Times New Roman", serif;
+
+    /* Motion tokens: fast < normal < slow, one easing */
+    --duration-fast: 0.15s;
+    --duration-normal: 0.25s;
+    --duration-slow: 0.4s;
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+    /* Warm honey-amber tag (light mode only). Dark mode keeps the original
+       violet tint so each theme stays internally consistent. */
+    --color-tag-light: #f6e7c4;
+    --color-tag-text-light: #7d4e0c;
 }
 
 @layer base {
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    background-color: var(--color-bg-light);
-    color: var(--color-text-light);
-    transition: background-color 0.3s ease, color 0.3s ease;
-  }
-  .dark body {
-    background-color: var(--color-bg-dark);
-    color: var(--color-text-dark);
-  }
-  @media (prefers-reduced-motion: reduce) {
-    body { transition: none; }
-  }
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+    body {
+        font-family: var(--font-sans);
+        -webkit-font-smoothing: antialiased;
+        background-color: var(--color-bg-light);
+        color: var(--color-text-light);
+        transition:
+            background-color var(--duration-normal) ease,
+            color var(--duration-normal) ease;
+    }
+    .dark body {
+        background-color: var(--color-bg-dark);
+        color: var(--color-text-dark);
+    }
+    /* Editorial display serif for page-level titles (warm paper / Monet mood) */
+    h1 {
+        font-family: var(--font-display);
+    }
+    /* Visible keyboard focus for every interactive element, on-token violet */
+    :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+        outline: 2px solid var(--color-accent-light);
+        outline-offset: 2px;
+    }
+    .dark :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+        outline-color: var(--color-accent-dark);
+    }
+    @media (prefers-reduced-motion: reduce) {
+        body {
+            transition: none;
+        }
+    }
 }
 
 @layer components {
-  /* Unified page container for all list pages */
-  .page {
-    @apply relative max-w-6xl mx-auto px-4 py-8;
-  }
-  /* Soft translucent panel (no border, subtle shadow) over the art background */
-  .card {
-    @apply bg-card-light/90 dark:bg-card-dark/90 rounded-2xl shadow-sm;
-  }
-  /* Pastel purple pill tag (design #F0E6FF bg / #5B21B6 text) */
-  .tag {
-    @apply inline-flex items-center px-2.5 py-0.5 text-xs font-medium rounded-full
-      bg-accent-light/15 dark:bg-accent-dark/15
-      text-[#5b21b6] dark:text-[#d9c4f0]
+    /* Unified page container for all list pages */
+    .page {
+        @apply relative max-w-6xl mx-auto px-4 py-8;
+    }
+    /* Surface hierarchy over the art background: page bg → .card → .panel.
+       Each step is more opaque so content stays readable while the Monet art
+       still glows through. */
+    .card {
+        @apply bg-card-light/85 dark:bg-card-dark/85 rounded-2xl shadow-sm border border-border-light/60 dark:border-border-dark/60;
+    }
+    .card:hover {
+        @apply bg-card-light/95 dark:bg-card-dark/95;
+    }
+    /* Nested panel that sits on top of a .card (stats, tech-stack boxes) */
+    .panel {
+        @apply rounded-2xl bg-bg-light/75 dark:bg-bg-dark/75;
+    }
+    /* Warm honey-amber pill tag in light mode; dark mode keeps the violet tint. */
+    .tag {
+        @apply inline-flex items-center px-2.5 py-0.5 text-xs font-medium rounded-full
+      bg-tag-light dark:bg-accent-dark/15
+      text-tag-text-light dark:text-[#d9c4f0]
       transition-colors;
-  }
-  .tag:hover {
-    @apply bg-accent-light/25 dark:bg-accent-dark/25;
-  }
-  /* Make an entire relative card clickable via the nearest link's ::after,
+    }
+    .tag:hover {
+        @apply bg-[#f0dcb0] dark:bg-accent-dark/25;
+    }
+    /* Make an entire relative card clickable via the nearest link's ::after,
      without nesting anchors (tags stay clickable with `relative`) */
-  .stretched-link::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-  }
-  /* Section heading with a leading accent bar */
-  .section-title {
-    @apply flex items-center gap-2.5 text-xl font-bold text-heading-light dark:text-heading-dark;
-  }
-  .section-title::before {
-    content: '';
-    @apply block w-1 h-5 rounded-full bg-accent-light dark:bg-accent-dark;
-  }
+    .stretched-link::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+    }
+    /* Section heading with a leading accent bar */
+    .section-title {
+        @apply flex items-center gap-2.5 text-xl font-bold text-heading-light dark:text-heading-dark;
+    }
+    .section-title::before {
+        content: "";
+        display: block;
+        width: 0.25rem;
+        height: 1.25rem;
+        border-radius: 9999px;
+        background-color: var(--color-accent-light);
+    }
+    .dark .section-title::before {
+        background-color: var(--color-accent-dark);
+    }
 }
 
 /* Scroll-reveal animation (driven by IntersectionObserver in BaseLayout) */
 /* TOC active section (set by post page reading script) */
-.toc-link.toc-active { color: var(--color-accent-light); }
-.dark .toc-link.toc-active { color: var(--color-accent-dark); }
+.toc-link.toc-active {
+    color: var(--color-accent-light);
+}
+.dark .toc-link.toc-active {
+    color: var(--color-accent-dark);
+}
 
 /* Code block line numbers + copy button (see BaseLayout initCodeBlocks).
    The button/label live in a .code-block wrapper (sibling of the scrollable
    <pre>) so they never move when the code scrolls horizontally. */
-.code-block { position: relative; }
-pre.astro-code.code-enhanced > code { display: block; padding-top: 1.9rem; }
-pre.astro-code code { counter-reset: ln; }
+.code-block {
+    position: relative;
+}
+pre.astro-code.code-enhanced > code {
+    display: block;
+    padding-top: 1.9rem;
+}
+pre.astro-code code {
+    counter-reset: ln;
+}
 pre.astro-code .line::before {
-  counter-increment: ln;
-  content: counter(ln);
-  display: inline-block;
-  width: 2.2em;
-  margin-right: 1.4em;
-  padding-right: 0.6em;
-  text-align: right;
-  color: rgba(225, 228, 232, 0.35);
-  border-right: 1px solid rgba(225, 228, 232, 0.15);
-  user-select: none;
+    counter-increment: ln;
+    content: counter(ln);
+    display: inline-block;
+    width: 2.2em;
+    margin-right: 1.4em;
+    padding-right: 0.6em;
+    text-align: right;
+    color: rgba(225, 228, 232, 0.35);
+    border-right: 1px solid rgba(225, 228, 232, 0.15);
+    user-select: none;
 }
 .code-lang {
-  position: absolute;
-  top: 0.5rem;
-  left: 0.75rem;
-  z-index: 10;
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: rgba(225, 228, 232, 0.5);
-  user-select: none;
+    position: absolute;
+    top: 0.5rem;
+    left: 0.75rem;
+    z-index: 10;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: rgba(225, 228, 232, 0.5);
+    user-select: none;
 }
 .code-copy {
-  position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-  z-index: 10;
-  padding: 0.2rem 0.55rem;
-  font-size: 0.7rem;
-  line-height: 1.4;
-  border-radius: 0.375rem;
-  border: 1px solid rgba(225, 228, 232, 0.25);
-  background: rgba(255, 255, 255, 0.08);
-  color: #e1e4e8;
-  cursor: pointer;
-  opacity: 0.5;
-  transition: opacity 0.2s ease;
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    z-index: 10;
+    padding: 0.2rem 0.55rem;
+    font-size: 0.7rem;
+    line-height: 1.4;
+    border-radius: 0.375rem;
+    border: 1px solid rgba(225, 228, 232, 0.25);
+    background: rgba(255, 255, 255, 0.08);
+    color: #e1e4e8;
+    cursor: pointer;
+    opacity: 0.5;
+    transition: opacity var(--duration-fast) var(--ease-out);
 }
 .code-block:hover .code-copy,
 .code-copy:hover,
-.code-copy:focus-visible { opacity: 1; }
-.code-copy:hover { background: rgba(255, 255, 255, 0.18); }
+.code-copy:focus-visible {
+    opacity: 1;
+}
+.code-copy:hover {
+    background: rgba(255, 255, 255, 0.18);
+}
 
 /* Scrollbars: subtle site-wide + dark-theme match for code blocks */
-* { scrollbar-width: thin; scrollbar-color: var(--color-border-light) transparent; }
-.dark * { scrollbar-color: var(--color-border-dark) transparent; }
-*::-webkit-scrollbar { width: 8px; height: 8px; }
-*::-webkit-scrollbar-track { background: transparent; }
-*::-webkit-scrollbar-thumb { background: var(--color-border-light); border-radius: 4px; }
-*::-webkit-scrollbar-thumb:hover { background: var(--color-text-light); }
-.dark *::-webkit-scrollbar-thumb { background: var(--color-border-dark); }
-.dark *::-webkit-scrollbar-thumb:hover { background: var(--color-text-dark); }
-pre.astro-code { scrollbar-color: rgba(225, 228, 232, 0.3) transparent; }
-pre.astro-code::-webkit-scrollbar { width: 8px; height: 8px; }
-pre.astro-code::-webkit-scrollbar-track { background: transparent; }
-pre.astro-code::-webkit-scrollbar-thumb { background: rgba(225, 228, 232, 0.3); border-radius: 4px; }
-pre.astro-code::-webkit-scrollbar-thumb:hover { background: rgba(225, 228, 232, 0.5); }
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border-light) transparent;
+}
+.dark * {
+    scrollbar-color: var(--color-border-dark) transparent;
+}
+*::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+*::-webkit-scrollbar-track {
+    background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+    background: var(--color-border-light);
+    border-radius: 4px;
+}
+*::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text-light);
+}
+.dark *::-webkit-scrollbar-thumb {
+    background: var(--color-border-dark);
+}
+.dark *::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text-dark);
+}
+pre.astro-code {
+    scrollbar-color: rgba(225, 228, 232, 0.3) transparent;
+}
+pre.astro-code::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+pre.astro-code::-webkit-scrollbar-track {
+    background: transparent;
+}
+pre.astro-code::-webkit-scrollbar-thumb {
+    background: rgba(225, 228, 232, 0.3);
+    border-radius: 4px;
+}
+pre.astro-code::-webkit-scrollbar-thumb:hover {
+    background: rgba(225, 228, 232, 0.5);
+}
 
+/* Content entrance. `[data-reveal]` starts hidden and is revealed either by
+   IntersectionObserver on the first full load (scroll-reveal) or, after
+   in-site navigation, by a phase-delayed materialize (BaseLayout) that starts
+   once the old content has faded out. */
 [data-reveal] {
-  opacity: 0;
-  transform: translateY(16px);
-  transition: opacity 0.5s ease, transform 0.5s ease;
+    opacity: 0;
+    transform: translateY(6px);
+    transition:
+        opacity 0.3s var(--ease-out),
+        transform 0.3s var(--ease-out);
 }
 [data-reveal].reveal-visible {
-  opacity: 1;
-  transform: none;
-}
-
-/* Page-transition (View Transitions) subtle fade+slide */
-::view-transition-old(root) {
-  animation: vt-out 0.25s ease both;
-}
-::view-transition-new(root) {
-  animation: vt-in 0.35s ease both;
-}
-@keyframes vt-out {
-  to { opacity: 0; transform: translateY(-8px); }
-}
-@keyframes vt-in {
-  from { opacity: 0; transform: translateY(12px); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  [data-reveal] {
     opacity: 1;
     transform: none;
-    transition: none;
-  }
-  ::view-transition-old(root),
-  ::view-transition-new(root) {
+}
+
+/* ── View Transitions: layered motion hierarchy ─────────────────────
+   Only Main content animates; Header/Footer/Background stay put:
+     Background  .random-bg    → art-bg        slow crossfade 600ms
+     Header      .site-nav     → app-header     frozen
+     Footer      .site-footer  → site-footer    frozen
+     Main        .site-main    → main-content   old fades out, new materializes
+   The old content leaves first (fast), then the new content materializes
+   piecewise — the background is the only layer that keeps changing. */
+
+:root {
+    --vt-content-out: 160ms;
+}
+
+.random-bg {
+    view-transition-name: art-bg;
+}
+.site-nav {
+    view-transition-name: app-header;
+}
+.site-footer {
+    view-transition-name: site-footer;
+}
+.site-main {
+    view-transition-name: main-content;
+}
+
+/* Chrome layers (header + footer): identical on every page → frozen. */
+::view-transition-group(app-header),
+::view-transition-group(site-footer) {
+    animation: none !important;
+}
+::view-transition-old(app-header),
+::view-transition-new(app-header),
+::view-transition-old(site-footer),
+::view-transition-new(site-footer) {
+    animation: none !important;
+}
+
+/* Background: continuous slow crossfade. */
+::view-transition-group(art-bg),
+::view-transition-old(art-bg),
+::view-transition-new(art-bg) {
+    animation-duration: 600ms;
+}
+
+/* Main content: the old snapshot fades out fast; the new snapshot stays empty
+   (content is hidden for the materialize) and the live DOM paints in after —
+   a clean sequence, no "whole block replaced" feel. */
+::view-transition-group(main-content) {
     animation: none;
-  }
+}
+::view-transition-old(main-content) {
+    animation: content-out var(--vt-content-out) cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+::view-transition-new(main-content) {
+    animation: none;
+}
+@keyframes content-out {
+    to {
+        opacity: 0;
+        transform: translateY(-3px);
+    }
+}
+
+/* Root: nothing meaningful left in it (command palette is hidden) → static. */
+::view-transition-group(root),
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation: none;
+}
+
+/* Global reduced-motion fallback: collapse every animation/transition to a
+   single frame. Keeps content visible without vestibular triggers. */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+    [data-reveal] {
+        opacity: 1 !important;
+        transform: none !important;
+    }
+    ::view-transition-group(root),
+    ::view-transition-old(root),
+    ::view-transition-new(root),
+    ::view-transition-group(main-content),
+    ::view-transition-old(main-content),
+    ::view-transition-new(main-content),
+    ::view-transition-old(art-bg),
+    ::view-transition-new(art-bg),
+    ::view-transition-group(app-header),
+    ::view-transition-old(app-header),
+    ::view-transition-new(app-header),
+    ::view-transition-group(site-footer),
+    ::view-transition-old(site-footer),
+    ::view-transition-new(site-footer) {
+        animation: none !important;
+    }
 }
