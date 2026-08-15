@@ -1,8 +1,8 @@
 ---
-title: "用 Claude Code 和一个小项目，从零学会 C++"
+title: "用 Claude Code 和一个小项目，从零学会一门新语言（c++）"
 description: "用'项目 + AI 助手'的方式学 C++，以及踩过的坑"
 date: 2026-08-07
-tags: [cpp, learning, ai tutorial]
+tags: [learning, ai tutorial]
 ---
 
 # 用 Claude Code 和一个小项目，从零学会 C++

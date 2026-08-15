@@ -2,7 +2,7 @@
 title: "c++ 基础语法"
 description: "以学C后快速了解C++ 基础语法"
 date: 2026-08-15
-tags: [cpp]
+tags: [c++]
 type: note
 topic: "C++"
 ---
