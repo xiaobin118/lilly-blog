@@ -2,6 +2,13 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import CollapsibleSection from '../components/CollapsibleSection.astro';
 
+const stack = [
+  { title: 'Languages', items: ['C++', 'C', 'Python', 'TypeScript', 'Java', 'SQL'] },
+  { title: 'Frontend', items: ['React', 'TypeScript', 'Tailwind CSS', 'Astro'] },
+  { title: 'Backend', items: ['Java', 'Spring Boot', 'MyBatis Plus'] },
+  { title: 'Tools', items: ['Git', 'Neovim', 'PowerShell'] },
+];
+
 const sections = [
   {
     id: 'music', icon: '♫', title: 'Music',
@@ -32,10 +39,45 @@ const sections = [
 ---
 <BaseLayout title="About | Lilly's Blog">
   <div class="page">
-    <section class="card p-6 mb-6">
+    <section class="card p-6 md:p-8 mb-6" data-reveal>
       <h1 class="text-2xl font-bold text-heading-light dark:text-heading-dark">Lilly</h1>
-      <p class="mt-2 text-text-light dark:text-text-dark">Hi there, I'm a programmer from HIT. I love music and anime, hope you can find something interesting here!</p>
+      <p class="mt-2 text-text-light dark:text-text-dark">Hi there, I'm a CS undergraduate from HIT. I love music and anime, hope you can find something interesting here!</p>
     </section>
+
+    <section class="card p-6 md:p-8 mb-6" data-reveal>
+      <h2 class="section-title mb-5">Tech Stack</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+        <div class="rounded-2xl bg-bg-light/60 dark:bg-bg-dark/60 p-4">
+          <h3 class="text-sm font-semibold text-heading-light dark:text-heading-dark mb-2">正在学</h3>
+          <div class="flex flex-wrap gap-2">
+            <span class="tag">C++</span>
+            <span class="tag">Java</span>
+            <span class="tag">SQL</span>
+          </div>
+        </div>
+        <div class="rounded-2xl bg-bg-light/60 dark:bg-bg-dark/60 p-4">
+          <h3 class="text-sm font-semibold text-heading-light dark:text-heading-dark mb-2">在构建</h3>
+          <ul class="text-sm text-text-light dark:text-text-dark space-y-1 list-none">
+            <li>个人知识库（本博客）</li>
+            <li>AOIP 后端（Java / Spring Boot）</li>
+            <li>C++ 项目：赌场游戏 · CGPA 计算器</li>
+          </ul>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {
+          stack.map((group) => (
+            <div class="rounded-2xl bg-bg-light/60 dark:bg-bg-dark/60 p-4">
+              <h3 class="text-sm font-semibold text-heading-light dark:text-heading-dark mb-2">{group.title}</h3>
+              <div class="flex flex-wrap gap-2">
+                {group.items.map((item) => <span class="tag">{item}</span>)}
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
       {sections.map((s) => <CollapsibleSection section={s} />)}
     </div>
