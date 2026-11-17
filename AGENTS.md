@@ -9,9 +9,10 @@ Astro 5 + Tailwind CSS 4 静态博客（TypeScript），部署在 GitHub Pages �
 - `git push origin main` — 触发 GitHub Actions 部署；只 commit 不 push，线上不会更新
 
 ## 内容
-- 文章/笔记在 `src/content/blog/*.md`；文件名 = URL slug（仅英文/数字/连字符）
-- Schema 有 `type`（article|note|project|research，默认 article）+ `topic`；笔记进 /notes 按主题分组
-- LaTeX 数学：`$...$` / `$$...$$` 经 KaTeX 渲染（remark-math + rehype-katex）
+- **发布任何内容前先读 [rule.md](rule.md)**：类型判定（project / note / article）、frontmatter、图片、公式、发布流程都在那里
+- 文章/笔记在 `src/content/blog/<slug>.md`；项目在 `src/content/projects/<id>.md`；文件名 = URL slug（仅小写字母/数字/连字符）
+- blog 的 `type`：article | note | research（默认 article）；项目是独立集合，靠文章里的 `project: <id>` 关联
+- LaTeX 数学：行内 `\(...\)`、显示公式三行式（`$$` / 公式 / `$$`），remark-math + rehype-katex
 
 ## 关键坑
 - ClientRouter 视图过渡会替换 DOM：组件脚本只运行一次。所有交互 JS 必须用 document 级事件委托或在 `astro:page-load` 重跑（主题切换、折叠、搜索过滤、命令面板、代码复制）。导航会抹掉 `.dark` 类——需在 `astro:page-load` 重新应用主题。
