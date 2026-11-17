@@ -243,8 +243,11 @@ $H_{out}=\lfloor(28+2-5)/2\rfloor+1=\lfloor25/2\rfloor+1=12+1=13$。
 输出尺寸 $\lfloor(5+2-3)/2\rfloor+1=3$，所以是 3×3。算 $Y_{0,1}$（窗口的左上角在填充后坐标 $(0,2)$）：
 
 $$
-\begin{bmatrix}0&0&0\\0&1&1\\0&1&1\end{bmatrix}\cdot K
-= (0)+(-2\times0+0\times1+2\times1)+(-1\times0+0\times1+1\times1)=0+2+1=3.
+\begin{aligned}
+&\begin{bmatrix}0&0&0\\0&1&1\\0&1&1\end{bmatrix}\cdot K\\
+&\quad= (0)+(-2\times0+0\times1+2\times1)\\
+&\quad\quad+(-1\times0+0\times1+1\times1)=0+2+1=3.
+\end{aligned}
 $$
 
 PyTorch 复算：`F.conv2d(x[None,None], k[None,None], stride=2, padding=1)` 的完整输出是

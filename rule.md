@@ -43,6 +43,7 @@
 
 - `slug` / `id` 必须匹配 `^[a-z0-9-]+$`（小写字母、数字、连字符），**它就是 URL**：`/post/<slug>/`、`/projects/<id>/`。
 - 中文标题不能直接当文件名；用英文语义化 slug（`ml-em-algorithm`、`git-blog-workflow`）。
+- note 与 project 的标题不要带数字编号，比如「机器学习实验3 kmeans与gmm」应直接写「kmeans 与 gmm」。
 - 一个文件一篇内容。**正文里不许再写 `# 标题`**——标题由 frontmatter 提供、布局统一渲染，否则页面会出现两个标题。
 
 ---
@@ -72,7 +73,7 @@ project: ml-exp3-kmeans-gmm # 可选：所属项目 id，最多一个
 
 ```yaml
 ---
-title: 机器学习实验三：k-means 与 GMM
+title: k-means 与 GMM
 description: 纯 NumPy 手写 k-means 与 EM，不依赖 scipy / sklearn
 date: 2026-10-13
 status: done                # done | doing | planned（默认 doing）
@@ -94,7 +95,7 @@ repo: https://github.com/... # 可选，必须是合法 URL
 - 校验在构建期：指向不存在的 id 时 `npm run build` 失败，错误信息会给出可用项目列表和出错文件，例如：
 
   ```
-  Unknown project reference(s). Available projects: ml-exp3-kmeans-gmm
+  Unknown project reference(s). Available projects: kmeans-gmm
     - git-blog-workflow: project "does-not-exist"
   ```
 
@@ -131,6 +132,7 @@ repo: https://github.com/... # 可选，必须是合法 URL
   ```
 
 - 禁止 `$$公式$$` 写在同一行：会被当作行内公式，排版塌掉。
+- 长公式要主动断行：`$$` 内单行源码超过约 90 个字符，或顶层 `+`、`=` 超过 4 个时，用 `\begin{aligned}` 在 `=`、`+` 处换行。KaTeX 不会自动换行，超宽公式会溢出卡片；页面有横向滚动兜底，但滚动条不是可接受的阅读方式。
 - 公式里出现中文时包在 `\text{...}` 里。
 
 ---
@@ -164,9 +166,11 @@ repo: https://github.com/... # 可选，必须是合法 URL
 - [ ] 类型判定有理由，且符合第 1 节
 - [ ] slug 合规、全站唯一
 - [ ] frontmatter 字段齐全；`tags` 全 ASCII；`date` 格式正确
+- [ ] 标题不要带数字编号
 - [ ] 正文没有 `#` 标题
 - [ ] 图片用 `./<slug>/` 相对路径，且 `alt` 非空
 - [ ] 显示公式是三行式
+- [ ] 长公式已用 `aligned` 断行（单行源码 > 90 字符或顶层运算符 > 4 个）
 - [ ] 关联的 `project` 存在（或已决定不关联）
 - [ ] `npm run build` 通过
 - [ ] 提交信息符合 `post:` / `feat:` / `fix:`

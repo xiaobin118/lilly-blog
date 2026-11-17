@@ -186,9 +186,11 @@ $$
 **代回值函数：与 JSD 的关系.**
 
 $$
-V(D^*,G)=\int p_{\text{data}}\ln\frac{p_{\text{data}}}{p_{\text{data}}+p_g}
-+p_g\ln\frac{p_g}{p_{\text{data}}+p_g}\,\mathrm dx
-=-2\ln2+2\,\mathrm{JSD}(p_{\text{data}}\Vert p_g).
+\begin{aligned}
+V(D^*,G)&=\int p_{\text{data}}\ln\frac{p_{\text{data}}}{p_{\text{data}}+p_g}\\
+&\quad+p_g\ln\frac{p_g}{p_{\text{data}}+p_g}\,\mathrm dx\\
+&=-2\ln2+2\,\mathrm{JSD}(p_{\text{data}}\Vert p_g).
+\end{aligned}
 $$
 
 推导的关键一步：把 $\ln\frac{p}{p+q}$ 写成 $\ln\frac{p}{m}-\ln2$，其中 $m=(p+q)/2$，两项合并正好是 $2\mathrm{JSD}$。所以固定 $G$ 时，最优判别器让值函数等于"负的 $2\ln2$ 加上两倍 JS 散度"；生成器的目标就是把这个 JS 散度压到 0。
@@ -200,8 +202,10 @@ $$
 值函数：
 
 $$
-V=0.8\ln0.8+0.2\ln0.2+0.2\ln0.2+0.8\ln0.8
-=2(0.8\ln0.8+0.2\ln0.2)=2(-0.1785-0.3219)=-1.0008 .
+\begin{aligned}
+V&=0.8\ln0.8+0.2\ln0.2+0.2\ln0.2+0.8\ln0.8\\
+&=2(0.8\ln0.8+0.2\ln0.2)=2(-0.1785-0.3219)=-1.0008 .
+\end{aligned}
 $$
 
 JS 散度：$m=(0.5,0.5)$，
@@ -285,8 +289,10 @@ $$
 **CycleGAN** 做无配对翻译（马与斑马之间互相转换）：两个生成器 $G:X\to Y$、$F:Y\to X$，两个判别器 $D_X,D_Y$。损失含对抗项与循环一致性项：
 
 $$
-\mathcal L=\mathcal L_{\text{GAN}}(G,D_Y)+\mathcal L_{\text{GAN}}(F,D_X)
-+\lambda\bigl(\lVert F(G(x))-x\rVert_1+\lVert G(F(y))-y\rVert_1\bigr).
+\begin{aligned}
+\mathcal L&=\mathcal L_{\text{GAN}}(G,D_Y)+\mathcal L_{\text{GAN}}(F,D_X)\\
+&\quad+\lambda\bigl(\lVert F(G(x))-x\rVert_1+\lVert G(F(y))-y\rVert_1\bigr).
+\end{aligned}
 $$
 
 **手算 6：合成损失.** 取 $\lambda=10$、$\mathcal L_{\text{GAN}}=0.7$、循环项 $0.3$：

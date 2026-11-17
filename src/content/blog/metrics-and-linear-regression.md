@@ -237,11 +237,11 @@ $$
 对 $w$ 求梯度并令其为零：
 
 $$
-\nabla_wL=2X^{\mathsf T}(Xw-y)=0
-\ \Longrightarrow\
-X^{\mathsf T}Xw=X^{\mathsf T}y
-\ \Longrightarrow\
-w=(X^{\mathsf T}X)^{-1}X^{\mathsf T}y .
+\begin{aligned}
+\nabla_wL&=2X^{\mathsf T}(Xw-y)=0\\
+&\Longrightarrow X^{\mathsf T}Xw=X^{\mathsf T}y\\
+&\Longrightarrow w=(X^{\mathsf T}X)^{-1}X^{\mathsf T}y .
+\end{aligned}
 $$
 
 这就是正规方程。几何上，$Xw$ 是 $X$ 的列空间里离 $y$ 最近的点，残差 $y-Xw$ 与列空间正交——最小二乘就是投影。
@@ -259,11 +259,12 @@ $$
 解方程 $3w_0+6w_1=5$、$6w_0+14w_1=11$：
 
 $$
-w_0=\frac{5-6w_1}{3},
-\qquad
-6\cdot\frac{5-6w_1}{3}+14w_1=11
-\Rightarrow 10-12w_1+14w_1=11
-\Rightarrow w_1=0.5,
+\begin{aligned}
+w_0&=\frac{5-6w_1}{3},\\
+6\cdot\frac{5-6w_1}{3}+14w_1&=11
+\Rightarrow 10-12w_1+14w_1=11\\
+&\Rightarrow w_1=0.5,
+\end{aligned}
 $$
 
 $$

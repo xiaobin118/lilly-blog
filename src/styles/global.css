@@ -219,6 +219,21 @@
     color: var(--color-accent-dark);
 }
 
+/* Long display math: KaTeX renders formulas as unbreakable blocks, so a
+   formula wider than the reading column would bleed over the page art.
+   Keep it inside the card and let it scroll horizontally instead. */
+.prose .katex-display {
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-block: 0.4rem;
+}
+.prose .katex-display > .katex {
+    display: inline-block;
+    min-width: 100%;
+    text-align: center;
+}
+
 /* Anchor jumps from the TOC must clear the fixed header (64px + breathing
    room), otherwise the target heading lands underneath it. */
 .prose :where(h2, h3, h4, h5, h6) {

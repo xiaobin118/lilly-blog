@@ -81,7 +81,11 @@ $$
 把差距写出来（这个推导值得跟着走一遍，它解释了 EM 每一步在干什么）：
 
 $$
-\ln p(X\mid\theta)-\mathcal L(q,\theta)=\sum_{n=1}^{N}\sum_{k=1}^{K}q_{nk}\ln\frac{q_{nk}}{p(z_n=k\mid x_n,\theta)}=\mathrm{KL}\big(q(Z)\,\big\|\,p(Z\mid X,\theta)\big)
+\begin{aligned}
+\ln p(X\mid\theta)-\mathcal L(q,\theta)
+&=\sum_{n=1}^{N}\sum_{k=1}^{K}q_{nk}\ln\frac{q_{nk}}{p(z_n=k\mid x_n,\theta)}\\
+&=\mathrm{KL}\big(q(Z)\,\big\|\,p(Z\mid X,\theta)\big)
+\end{aligned}
 $$
 
 第一步是把 $\ln p(X\mid\theta)=\sum_n\ln p(x_n\mid\theta)$ 里的 $\ln p(x_n)$ 用贝叶斯公式写成 $\ln p(x_n,z_n=k)-\ln p(z_n=k\mid x_n)$，第二步整理成 KL 散度的形式。
