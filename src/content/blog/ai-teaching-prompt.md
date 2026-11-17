@@ -5,8 +5,6 @@ date: 2026-08-07
 tags: [ai, learning, prompt]
 ---
 
-# AI 教学提示词模板
-
 将这个 prompt 用于其他项目，AI 会像这个 CGPA 计算器项目一样，一步步教你。
 
 ---

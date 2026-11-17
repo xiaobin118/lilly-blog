@@ -5,8 +5,6 @@ date: 2026-08-07
 tags: [learning, ai tutorial]
 ---
 
-# 用 Claude Code 和一个小项目，从零学会 C++
-
 > 这篇博客记录了我用"项目 + AI 助手"的方式学 C++ 的过程，以及过程中踩过的坑。
 
 ## 开始之前
