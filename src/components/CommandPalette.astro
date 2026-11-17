@@ -163,7 +163,7 @@ const base = import.meta.env.BASE_URL;
           .map((r) => ({
             title: highlight(r.title ?? '', q),
             sub: escapeHtml(r.description || (r.tags ?? []).join(' · ')),
-            icon: r.type === 'note' ? '📝' : '📄',
+            icon: r.type === 'note' ? '📝' : r.type === 'project' ? '🗂' : '📄',
             run: () => { location.href = r.url ?? ''; },
           }));
       }
@@ -177,7 +177,7 @@ const base = import.meta.env.BASE_URL;
           .map((r) => ({
             title: escapeHtml(r.title),
             sub: escapeHtml(r.description || r.tags.join(' · ')),
-            icon: r.type === 'note' ? '📝' : '📄',
+            icon: r.type === 'note' ? '📝' : r.type === 'project' ? '🗂' : '📄',
             run: () => { location.href = r.url; },
           }));
       }

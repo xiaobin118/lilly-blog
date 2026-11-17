@@ -3,6 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection, render } from 'astro:content';
 import { slugifyTag } from '../../lib/tags';
 import { estimateReadTime } from '../../lib/reading';
+import { postUrl } from '../../lib/urls';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
@@ -87,7 +88,7 @@ const related = (await getCollection('blog'))
               <div class="flex flex-col gap-3">
                 {
                   related.map((p) => (
-                    <a href={`${base}post/${p.id}/`} class="card p-4 hover:shadow-md transition-shadow duration-normal block group">
+                    <a href={postUrl(p.id)} class="card p-4 hover:shadow-md transition-shadow duration-normal block group">
                       <div class="flex items-start justify-between gap-3">
                         <h3 class="text-base font-medium text-heading-light dark:text-heading-dark group-hover:text-accent-light dark:group-hover:text-accent-dark transition-colors">{p.data.title}</h3>
                         <time datetime={p.data.date.toISOString()} class="text-xs text-text-light dark:text-text-dark shrink-0">{p.data.date.toLocaleDateString('zh-CN')}</time>
