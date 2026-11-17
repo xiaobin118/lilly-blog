@@ -4,9 +4,9 @@ import CollapsibleSection from '../components/CollapsibleSection.astro';
 
 const stack = [
   { title: 'Languages', items: ['C++', 'C', 'Python', 'TypeScript', 'Java', 'SQL'] },
-  { title: 'Frontend', items: ['React', 'TypeScript', 'Tailwind CSS', 'Astro'] },
-  { title: 'Backend', items: ['Java', 'Spring Boot', 'MyBatis Plus'] },
-  { title: 'Tools', items: ['Git', 'Neovim', 'PowerShell'] },
+  { title: 'ML / Data', items: ['NumPy', 'PyTorch', 'Matplotlib', 'pandas'] },
+  { title: 'Web / Backend', items: ['React', 'Astro', 'Tailwind CSS', 'Spring Boot', 'MyBatis Plus', 'Redis'] },
+  { title: 'Tools', items: ['Git', 'CMake', 'Linux / WSL', 'Neovim', 'PowerShell'] },
 ];
 
 const sections = [
@@ -41,7 +41,10 @@ const sections = [
   <div class="page">
     <section class="card p-6 md:p-8 mb-6" data-reveal>
       <h1 class="text-3xl font-bold text-heading-light dark:text-heading-dark">Lilly</h1>
-      <p class="mt-2 text-text-light dark:text-text-dark">Hi there, I'm a CS undergraduate from HIT. I love music and anime, hope you can find something interesting here!</p>
+      <p class="mt-2 text-text-light dark:text-text-dark">
+        Hi there, I'm Lilly, a CS undergraduate at HIT. I love to build small tools for me and learn new things by project. The goal of now is to make resume more solid and get a good internship. Gugugaga!
+        I love music and anime — hope you can find something interesting here!
+      </p>
     </section>
 
     <section class="card p-6 md:p-8 mb-6" data-reveal>
@@ -50,17 +53,20 @@ const sections = [
         <div class="panel p-4">
           <h3 class="text-sm font-semibold text-heading-light dark:text-heading-dark mb-2">正在学</h3>
           <div class="flex flex-wrap gap-2">
-            <span class="tag">C++</span>
-            <span class="tag">Java</span>
-            <span class="tag">SQL</span>
+            <span class="tag">Machine Learning</span>
+            <span class="tag">PyTorch</span>
+            <span class="tag">Java / Spring</span>
+            <span class="tag">Computer network</span>
+            <span class="tag">Operation System</span>
+            <span class="tag">NLP</span>
           </div>
         </div>
         <div class="panel p-4">
           <h3 class="text-sm font-semibold text-heading-light dark:text-heading-dark mb-2">在构建</h3>
           <ul class="text-sm text-text-light dark:text-text-dark space-y-1 list-none">
-            <li>个人知识库（本博客）</li>
-            <li>AOIP 后端（Java / Spring Boot）</li>
-            <li>C++ 项目：赌场游戏 · CGPA 计算器</li>
+            <li><a class="text-accent-light dark:text-accent-dark hover:underline" href="https://github.com/xiaobin118/HIT_ML_Lab">HIT_ML_Lab</a>机器学习基础实验</li>
+            <li><a class="text-accent-light dark:text-accent-dark hover:underline" href="https://github.com/xiaobin118/windows-which-key">windows-which-key</a>Windows下的Which Key, 用一个软件让你的电脑遥遥领先</li>
+            <li><a class="text-accent-light dark:text-accent-dark hover:underline" href=https://github.com/xiaobin118/lilly-blog">lilly-blog</a>个人博客</li>
           </ul>
         </div>
       </div>
