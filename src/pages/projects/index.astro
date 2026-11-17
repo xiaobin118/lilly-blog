@@ -2,13 +2,16 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
 import { getCollection } from 'astro:content';
-import { countByProject } from '../../lib/projects';
+import { countByProject, assertKnownProjects } from '../../lib/projects';
 
 const projects = (await getCollection('projects')).sort(
   (a, b) => b.data.date.getTime() - a.data.date.getTime()
 );
 const posts = await getCollection('blog');
 const counts = countByProject(posts);
+
+// Build fails when an article points at a project id that does not exist.
+assertKnownProjects(posts, new Set(projects.map((project) => project.id)));
 ---
 <BaseLayout title="Projects | Lilly's Blog" description="项目合集：每个项目下的文章与笔记">
   <div class="page">
