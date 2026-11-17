@@ -56,7 +56,7 @@ const ogImage = new URL(`${base}og-image.webp`, Astro.site).href;
     <a href="#main" class="skip-link">跳到正文</a>
     <Background />
     <Navbar />
-    <main id="main" tabindex="-1" class="site-main relative z-10 min-h-svh pt-16">
+    <main id="main" class="site-main relative z-10 min-h-svh pt-16">
       <slot />
     </main>
     <Footer />
@@ -170,4 +170,18 @@ const ogImage = new URL(`${base}og-image.webp`, Astro.site).href;
   }
   initCodeBlocks();
   document.addEventListener('astro:page-load', initCodeBlocks);
+
+  // Skip link. The jump target has to be focusable or screen readers keep
+  // their cursor on the link, but a static `tabindex="-1"` on <main> trips
+  // a11y linters that flag tabindex on non-interactive elements. Adding the
+  // attribute only when the link is actually used keeps both behaviours.
+  // Delegated: the skip link is re-created on every ClientRouter navigation.
+  document.addEventListener('click', (e) => {
+    const link = (e.target as Element | null)?.closest('.skip-link');
+    if (!link) return;
+    const main = document.getElementById('main');
+    if (!main) return;
+    main.setAttribute('tabindex', '-1');
+    main.focus({ preventScroll: true });
+  });
 </script>
