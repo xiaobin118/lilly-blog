@@ -1,6 +1,6 @@
 ---
-title: "字符串按分隔符切分（find + substr）"
-description: "手工用 std::string::find + substr 把定界文本行切成字段"
+title: "字符串按分隔符切分"
+description: "用 std::string::find + substr 把定界文本行切成字段"
 date: 2026-08-15
 tags: [cpp, string, parsing]
 type: note
@@ -10,17 +10,11 @@ topic: "C++"
 # 字符串按分隔符切分（find + substr）
 
 ## Concept
-手工用 `std::string::find` + `substr` 把一行文本按分隔符切成多个字段。
-- **是什么**：`s.find(ch, start)` 从 `start` 位置向后找字符 `ch`，返回下标或 `npos`；`s.substr(pos, len)` 截取子串。配合循环，一行 `A|B|C` 变成三个字段。
-- **解决什么问题**：项目数据文件 `students.txt` 每行是 `studentId|name|className|...`，`deserialize` 要把它还原成 `StudentRecord`。
-- **在体系中的位置**：实体层（models）的解析基础——文件/数据库读进来的原始文本，都要经过它变成结构体。
+标准库没有 `std::string::split`。解析定界文本（CSV、配置文件、日志行）时，最直接的写法就是`find` 找下一个分隔符、`substr` 截取字段，然后从分隔符之后继续找——直到 `find` 返回
+`std::string::npos` 表示"没有更多分隔符了"。
 
-## Why
-- **为何需要**：程序读进来的是一行字节，不是结构体。必须有"文本 ↔ 结构体"的桥。
-- **与相关概念的区别**：`std::istringstream` + `std::getline(ss, tok, '|')` 也能切分，但 `find`/`substr` 能精确知道"第几个字段"的位置，调试时更直观。
-- **若不用会怎样**：字段数对不上、空字段、越界取值全乱套。
 
-## Example（项目真实代码 `src/models/StudentRecord.cpp`）
+## Example
 ```cpp
 std::vector<std::string> parts;
 size_t start = 0;
@@ -34,22 +28,135 @@ while (true) {
     start = pos + 1;                          // 跳过这个分隔符继续
 }
 ```
-**为什么这么写**：`npos` 是哨兵（极大值），表示"找不到"；字段用"两个 `|` 之间的子串"表达，最后一个字段用"从 start 到结尾"。循环终止条件是"没有更多分隔符"而非"数够了"——这样字段数不管多少都能切。
 
-## General Pattern
-解析任何"定界文本行"（CSV、日志、配置）的通用套路：
-1. 循环 `find(sep, start)`，`start` 每次跳到 `pos + 1`
-2. 命中 `npos` 时取剩余段并 break
-3. 切完后**校验字段个数**，再逐字段转换类型
+注意最后一行硬编码的 + 1：它只对单字符分隔符成立。如果 kFieldSep 是 "||" 这种多字符分隔符，正确写法是 start = pos + kFieldSep.size()，否则会把分隔符的尾巴吃进下一个字段。
 
-## Common Mistakes（真实踩过）
-- **用错常量**：`s.find(kFieldCount, start)` 把整数 7 当成字符去搜（ASCII 7 是控制字符），永远搜不到 → 整行当一个字段 → 所有记录解析失败，表现为"共加载 0 条记录"。教训：`kFieldSep`（分隔符）和 `kFieldCount`（个数）名字像，极易混用。
-- **切分后不校验个数**就直接 `parts[4]`——字段少了会越界。
+## 更多实际用途
+在本人做的一个课程项目中，HTTP 请求解析器的请求行就是按空格切分成 method / target / version 三段，然后从 target 拆出 host / port / path, 此时就可以用上面的 find + substr 循环：
 
-## Related Concepts
-- [[02-stoi-to-string]]（切出来的文本要转数字）
-- [[04-serialize-deserialize]]（反向操作：拼一行）
-- CRLF 处理（`\r` 留在行尾要先 `pop_back`）
+```cpp
+bool parseRequest(const std::string &raw, HttpRequest &out) {
+    // TODO 1: 逐行切开（分隔符 "\r\n"），第一行是请求行
+    std::string::size_type pos = raw.find("\r\n");
+    if (pos == std::string::npos) {
+        return false; // 没有找到请求行
+    }
+    std::string requestLine = raw.substr(0, pos);
 
-## Status
-Practiced
+    // TODO 2: 请求行按空格切成三段：method / target / version
+    std::string::size_type firstSpace = requestLine.find(' ');
+    if (firstSpace == std::string::npos) {
+        return false; // 没有找到第一个空格
+    }
+    std::string::size_type secondSpace = requestLine.find(' ', firstSpace + 1);
+    if (secondSpace == std::string::npos) {
+        return false; // 没有找到第二个空格
+    }
+    out.method = requestLine.substr(0, firstSpace);
+    std::string target =
+        requestLine.substr(firstSpace + 1, secondSpace - firstSpace - 1);
+    out.version = requestLine.substr(secondSpace + 1);
+
+    // TODO 3: 从 target 拆出 host / port / path
+    //           - 跳过开头的 "http://"
+    //           - host 之后若出现 ":"，冒号后是端口号
+    //           - 第一个 "/" 起是 path（连同后面的 query）；没有 "/" 则 path =
+    //           "/"
+
+    // Get host
+
+    std::string::size_type hostStart = 0;
+    if (target.compare(0, 7, "http://") == 0) {
+        hostStart = 7;
+    }
+    std::string::size_type pathStart = target.find('/', hostStart);
+    std::string hostPort;
+    if (pathStart != std::string::npos) {
+        hostPort = target.substr(hostStart, pathStart - hostStart);
+        out.path = target.substr(pathStart);
+    } else {
+        hostPort = target.substr(hostStart);
+        out.path = "/";
+    }
+
+    // Check for port
+    std::string::size_type colonPos = hostPort.find(':');
+    if (colonPos != std::string::npos) {
+        out.host = hostPort.substr(0, colonPos);
+        std::string portStr = hostPort.substr(colonPos + 1);
+        try {
+            out.port = std::stoi(portStr);
+        } catch (const std::exception &) {
+            return false; // Invalid port number
+        }
+    } else {
+        out.host = hostPort;
+        out.port = 80; // Default port
+    }
+
+    return true;
+}
+
+```
+
+## 封装成函数
+使用中把循环收进函数，顺便把分隔符类型放宽到 std::string，这样单字符和多字符都能覆盖
+```cpp
+#include <string>
+#include <vector>
+
+std::vector<std::string> split(const std::string& s, const std::string& sep) {
+    std::vector<std::string> parts;
+    if (sep.empty()) return {s};          // 空分隔符无从切分，原样返回
+
+    size_t start = 0;
+    while (true) {
+        size_t pos = s.find(sep, start);
+        if (pos == std::string::npos) {
+            parts.push_back(s.substr(start));
+            break;
+        }
+        parts.push_back(s.substr(start, pos - start));
+        start = pos + sep.size();
+    }
+    return parts;
+}
+```
+如果分隔符确定是单字符，用 s.find('|', start) 而不是 s.find("|", start)：前者走的是char_traits::find 的单元素路径，省掉一次 strlen，在超长行上肉眼可见地快。
+
+## 进一步优化
+但是上面的版本每个字段都要 substr 一次，即一次堆分配。字段多、行短时这是主要的开销来源。 换成 std::string_view 只返回指向原缓冲区的"视图"，全程零拷贝
+```cpp
+#include <string_view>
+#include <vector>
+
+std::vector<std::string_view> split_view(std::string_view s, std::string_view sep) {
+    std::vector<std::string_view> parts;
+    if (sep.empty()) return {s};
+
+    size_t start = 0;
+    while (true) {
+        size_t pos = s.find(sep, start);
+        if (pos == std::string_view::npos) {
+            parts.push_back(s.substr(start));
+            break;
+        }
+        parts.push_back(s.substr(start, pos - start));
+        start = pos + sep.size();
+    }
+    return parts;
+}
+```
+
+## C++20 的 ranges::views::split
+C++20 之后标准库终于有了官方切分，惰性求值、不分配内存：
+```cpp
+#include <ranges>
+
+for (auto part : line | std::views::split('|')) {
+    std::string_view field(part.begin(), part.end());  // 注意：part 不是 string_view
+    handle(field);
+}
+```
+
+两个注意点：split 的每个元素是子 range 而不是 string_view，要自己用 begin()/end()构造；另外 C++20 里对 std::string 用 views::split 时结果不满足 common_range，某些算法需要额外套 std::views::common。能用上面的手写版本就先用手写版本，依赖更少、
