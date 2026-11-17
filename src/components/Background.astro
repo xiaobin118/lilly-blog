@@ -21,6 +21,10 @@ const tagsImages = [
     `${base}image/tags/希露菲.webp`,
 ]
 
+const projectsImages = [
+  `${base}image/projects/3-莫奈-日出印象.webp`,
+]
+
 // Astro generates trailing-slash URLs (/lilly-blog/archive/), so strip the
 // base and surrounding slashes before matching the page.
 const page = Astro.url.pathname.startsWith(base)
@@ -36,6 +40,8 @@ if (clean === 'about') {
     pool = notesImages;
   } else if (clean === 'tags') {
     pool = tagsImages;
+  } else if (clean === 'projects' || clean.startsWith('projects/')) {
+    pool = projectsImages;
   } else {
   pool = homeImages;
 }

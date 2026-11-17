@@ -1,0 +1,39 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { projectUrl } from '../lib/urls';
+
+interface Props {
+  /** The project entry to render as a card. */
+  project: CollectionEntry<'projects'>;
+  /** How many blog entries are attached to this project. */
+  count: number;
+}
+const { project, count } = Astro.props;
+const url = projectUrl(project.id);
+const statusLabel = { done: '已完成', doing: '进行中', planned: '规划中' }[project.data.status];
+---
+<div
+  class="card p-6 relative hover:shadow-lg hover:-translate-y-1 transition-[transform,box-shadow] duration-normal ease-out group"
+  data-reveal
+  data-search-item
+>
+  <div class="flex items-start justify-between gap-3 flex-wrap">
+    <h2 class="text-lg font-semibold text-heading-light dark:text-heading-dark group-hover:text-accent-light dark:group-hover:text-accent-dark transition-colors">
+      <a href={url} class="stretched-link">{project.data.title}</a>
+    </h2>
+    <span class={`tag tag-${project.data.status}`}>{statusLabel}</span>
+  </div>
+  <p class="text-sm text-text-light dark:text-text-dark line-clamp-2 mt-2">{project.data.description}</p>
+  <div class="flex items-center justify-between gap-3 mt-4 flex-wrap">
+    <div class="flex flex-wrap items-center gap-2">
+      {project.data.tech.map((item) => <span class="tag">{item}</span>)}
+      {count > 0 && <span class="text-xs text-text-light dark:text-text-dark">{count} 篇文章</span>}
+    </div>
+    <div class="flex items-center gap-2 shrink-0">
+      <time datetime={project.data.date.toISOString()} class="text-xs text-text-light dark:text-text-dark">
+        {project.data.date.toLocaleDateString('zh-CN')}
+      </time>
+      <span class="text-sm text-text-light dark:text-text-dark group-hover:text-accent-light dark:group-hover:text-accent-dark group-hover:translate-x-0.5 transition-[transform,color] duration-fast ease-out" aria-hidden="true">→</span>
+    </div>
+  </div>
+</div>

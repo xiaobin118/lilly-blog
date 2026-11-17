@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import { getCollection } from 'astro:content';
+import { countByProject } from '../../lib/projects';
+
+const projects = (await getCollection('projects')).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime()
+);
+const posts = await getCollection('blog');
+const counts = countByProject(posts);
+---
+<BaseLayout title="Projects | Lilly's Blog" description="项目合集：每个项目下的文章与笔记">
+  <div class="page">
+    <h1 class="text-3xl font-bold text-heading-light dark:text-heading-dark mb-2">项目</h1>
+    <p class="text-sm text-text-light dark:text-text-dark mb-8">每个项目是一个合集：项目介绍 + 它下面的全部文章。</p>
+
+    {
+      projects.length === 0 && (
+        <div class="card p-12 text-center">
+          <p class="text-lg font-medium text-heading-light dark:text-heading-dark">还没有项目</p>
+          <p class="text-sm text-text-light dark:text-text-dark mt-2">
+            在 <code class="text-accent-light dark:text-accent-dark">src/content/projects/</code> 里加一篇 md 即可。
+          </p>
+        </div>
+      )
+    }
+
+    <div class="flex flex-col gap-5">
+      {projects.map((project) => <ProjectCard project={project} count={counts.get(project.id) ?? 0} />)}
+    </div>
+  </div>
+</BaseLayout>

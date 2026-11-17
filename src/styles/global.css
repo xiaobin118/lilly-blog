@@ -125,6 +125,42 @@
     }
 }
 
+/* Project status badges. `.tag` supplies the pill shape; these add the hue.
+   Unlayered on purpose so they win over the utility layer's .tag colors. */
+.tag-done {
+    background-color: rgba(46, 125, 50, 0.14);
+    color: #2e7d32;
+}
+.tag-done:hover {
+    background-color: rgba(46, 125, 50, 0.2);
+}
+.dark .tag-done {
+    background-color: rgba(126, 226, 168, 0.16);
+    color: #7ee2a8;
+}
+.tag-doing {
+    background-color: rgba(168, 81, 15, 0.12);
+    color: var(--color-accent-light);
+}
+.tag-doing:hover {
+    background-color: rgba(168, 81, 15, 0.18);
+}
+.dark .tag-doing {
+    background-color: rgba(192, 132, 252, 0.16);
+    color: var(--color-accent-dark);
+}
+.tag-planned {
+    background-color: rgba(91, 86, 78, 0.1);
+    color: var(--color-text-light);
+}
+.tag-planned:hover {
+    background-color: rgba(91, 86, 78, 0.16);
+}
+.dark .tag-planned {
+    background-color: rgba(156, 163, 175, 0.12);
+    color: var(--color-text-dark);
+}
+
 /* ── Article prose: the same warm ink scale as the rest of the site ──
    Tailwind Typography ships cool neutral grays (gray-700 / gray-900) for
    body and headings, which read "blue" next to the warm paper palette. Remap
