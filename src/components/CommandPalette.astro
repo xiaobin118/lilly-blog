@@ -7,16 +7,14 @@ const base = import.meta.env.BASE_URL;
     <div class="card overflow-hidden shadow-xl">
       <div class="flex items-center gap-2.5 px-4 py-3 border-b border-border-light dark:border-border-dark">
         <svg class="w-4 h-4 text-text-light dark:text-text-dark shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" /></svg>
-        <input id="cmd-input" type="text" placeholder="搜索文章、笔记，或输入命令（> 开头）" class="flex-1 bg-transparent text-sm text-heading-light dark:text-heading-dark placeholder:text-text-light/70 dark:placeholder:text-text-dark/70" autocomplete="off" spellcheck="false" />
+        <input id="cmd-input" type="text" role="combobox" aria-expanded="true" aria-controls="cmd-results" aria-autocomplete="list" placeholder="搜索文章、笔记，或输入命令（> 开头）" class="flex-1 bg-transparent text-sm text-heading-light dark:text-heading-dark placeholder:text-text-light/70 dark:placeholder:text-text-dark/70" autocomplete="off" spellcheck="false" />
         <kbd class="px-1.5 py-0.5 text-[10px] font-medium rounded border border-border-light dark:border-border-dark text-text-light dark:text-text-dark shrink-0">Esc</kbd>
       </div>
-      <ul id="cmd-results" class="max-h-[22rem] overflow-y-auto p-2"></ul>
+      <ul id="cmd-results" role="listbox" aria-label="搜索结果" class="max-h-[22rem] overflow-y-auto p-2"></ul>
     </div>
   </div>
 </div>
 <script>
-  import MiniSearch from 'minisearch';
-
   const commands = [
     { title: '浏览 Archive', hint: '归档', icon: '⌘', run: () => { location.href = `${base}archive`; } },
     { title: '浏览 Tags', hint: '标签', icon: '⌘', run: () => { location.href = `${base}tags/`; } },
@@ -38,16 +36,25 @@ const base = import.meta.env.BASE_URL;
   }
 
   const base = document.getElementById('cmd-palette')?.dataset.base ?? '';
-  let search: MiniSearch | null = null;
+  let MiniSearchCtor: typeof import('minisearch').default | null = null;
+  let search: InstanceType<typeof import('minisearch').default> | null = null;
   let docs: SearchDoc[] = [];
   let items: { title: string; sub?: string; hint?: string; icon: string; run?: () => void }[] = [];
   let activeIndex = 0;
+
+  async function loadMiniSearch() {
+    if (MiniSearchCtor) return MiniSearchCtor;
+    const mod = await import('minisearch');
+    MiniSearchCtor = mod.default;
+    return MiniSearchCtor;
+  }
 
   async function getSearch() {
     if (search) return search;
     try {
       const res = await fetch(`${base}search-index.json`);
       docs = await res.json();
+      const MiniSearch = await loadMiniSearch();
       search = new MiniSearch({
         fields: ['title', 'tags', 'description', 'body'],
         storeFields: ['title', 'description', 'tags', 'url', 'type'],
@@ -90,41 +97,47 @@ const base = import.meta.env.BASE_URL;
     return !document.getElementById('cmd-palette')?.classList.contains('hidden');
   }
 
+  function syncActiveDescendant() {
+    const input = document.getElementById('cmd-input');
+    if (input) input.setAttribute('aria-activedescendant', `cmd-opt-${activeIndex}`);
+  }
+
   function render(list: typeof items) {
     const resultsEl = document.getElementById('cmd-results');
     if (!resultsEl) return;
     items = list;
     activeIndex = 0;
     if (!items.length) {
-      resultsEl.innerHTML = '<li class="px-3 py-4 text-sm text-text-light dark:text-text-dark">没有匹配的结果</li>';
+      resultsEl.innerHTML = '<li role="presentation" class="px-3 py-4 text-sm text-text-light dark:text-text-dark">没有匹配的结果</li>';
       return;
     }
     resultsEl.innerHTML = items
       .map(
         (item, i) => `
-      <li>
-        <button type="button" data-idx="${i}" class="w-full text-left px-3 py-2.5 rounded-xl flex items-center gap-3 transition-colors ${i === 0 ? 'bg-bg-light/70 dark:bg-bg-dark/70' : 'hover:bg-bg-light/60 dark:hover:bg-bg-dark/60'}">
-          <span class="w-8 h-8 shrink-0 rounded-full bg-accent-light/15 dark:bg-accent-dark/15 text-accent-light dark:text-accent-dark flex items-center justify-center text-xs">${item.icon}</span>
-          <span class="min-w-0 flex-1">
-            <span class="block text-sm font-medium text-heading-light dark:text-heading-dark truncate">${item.title}</span>
-            ${item.sub ? `<span class="block text-xs text-text-light dark:text-text-dark truncate">${item.sub}</span>` : ''}
-          </span>
-          ${item.hint ? `<span class="text-xs text-text-light dark:text-text-dark shrink-0">${escapeHtml(item.hint)}</span>` : ''}
-        </button>
+      <li id="cmd-opt-${i}" role="option" aria-selected="${i === 0}" data-idx="${i}" class="cursor-pointer px-3 py-2.5 rounded-xl flex items-center gap-3 transition-colors ${i === 0 ? 'bg-bg-light/70 dark:bg-bg-dark/70' : 'hover:bg-bg-light/60 dark:hover:bg-bg-dark/60'}">
+        <span class="w-8 h-8 shrink-0 rounded-full bg-accent-light/15 dark:bg-accent-dark/15 text-accent-light dark:text-accent-dark flex items-center justify-center text-xs">${item.icon}</span>
+        <span class="min-w-0 flex-1">
+          <span class="block text-sm font-medium text-heading-light dark:text-heading-dark truncate">${item.title}</span>
+          ${item.sub ? `<span class="block text-xs text-text-light dark:text-text-dark truncate">${item.sub}</span>` : ''}
+        </span>
+        ${item.hint ? `<span class="text-xs text-text-light dark:text-text-dark shrink-0">${escapeHtml(item.hint)}</span>` : ''}
       </li>`
       )
       .join('');
+    syncActiveDescendant();
   }
 
   function move(d: number) {
     const resultsEl = document.getElementById('cmd-results');
     if (!resultsEl || !items.length) return;
     activeIndex = (activeIndex + d + items.length) % items.length;
-    [...resultsEl.querySelectorAll('button[data-idx]')].forEach((btn, i) => {
-      const el = btn as HTMLElement;
-      el.classList.toggle('bg-bg-light/70', i === activeIndex);
-      el.classList.toggle('dark:bg-bg-dark/70', i === activeIndex);
+    [...resultsEl.querySelectorAll('[data-idx]')].forEach((el, i) => {
+      const option = el as HTMLElement;
+      option.classList.toggle('bg-bg-light/70', i === activeIndex);
+      option.classList.toggle('dark:bg-bg-dark/70', i === activeIndex);
+      option.setAttribute('aria-selected', String(i === activeIndex));
     });
+    syncActiveDescendant();
   }
 
   function select() {
@@ -195,7 +208,7 @@ const base = import.meta.env.BASE_URL;
     const t = e.target as HTMLElement | null;
     if (t?.closest('#cmd-trigger')) { open(); return; }
     if (t?.closest('[data-cmd-close]')) { close(); return; }
-    const btn = t?.closest('#cmd-results button[data-idx]');
-    if (btn) items[Number((btn as HTMLElement).getAttribute('data-idx'))]?.run?.();
+    const option = t?.closest('#cmd-results [data-idx]');
+    if (option) items[Number((option as HTMLElement).getAttribute('data-idx'))]?.run?.();
   });
 </script>

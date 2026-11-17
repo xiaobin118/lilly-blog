@@ -1,7 +1,7 @@
 ---
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
-import RandomBackground from '../components/RandomBackground.astro';
+import Background from '../components/Background.astro';
 import CommandPalette from '../components/CommandPalette.astro';
 import { ClientRouter } from 'astro:transitions';
 import '../styles/global.css';
@@ -53,9 +53,10 @@ const ogImage = new URL(`${base}og-image.webp`, Astro.site).href;
     </script>
   </head>
   <body class="relative">
-    <RandomBackground />
+    <a href="#main" class="skip-link">跳到正文</a>
+    <Background />
     <Navbar />
-    <main class="site-main min-h-svh pt-16">
+    <main id="main" tabindex="-1" class="site-main relative z-10 min-h-svh pt-16">
       <slot />
     </main>
     <Footer />

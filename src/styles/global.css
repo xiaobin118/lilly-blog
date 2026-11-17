@@ -125,6 +125,97 @@
     }
 }
 
+/* ── Article prose: the same warm ink scale as the rest of the site ──
+   Tailwind Typography ships cool neutral grays (gray-700 / gray-900) for
+   body and headings, which read "blue" next to the warm paper palette. Remap
+   its tokens so an article's text and the cards around it share one scale.
+   These rules are unlayered on purpose: the plugin's own values live in
+   @layer utilities, so unlayered declarations win without !important. */
+.prose {
+    --tw-prose-body: var(--color-text-light);
+    --tw-prose-headings: var(--color-heading-light);
+    --tw-prose-lead: var(--color-text-light);
+    --tw-prose-links: var(--color-accent-light);
+    --tw-prose-bold: var(--color-heading-light);
+    --tw-prose-counters: var(--color-text-light);
+    --tw-prose-bullets: var(--color-accent-light);
+    --tw-prose-hr: var(--color-border-light);
+    --tw-prose-quotes: var(--color-heading-light);
+    --tw-prose-quote-borders: var(--color-accent-light);
+    --tw-prose-captions: var(--color-text-light);
+    --tw-prose-code: var(--color-heading-light);
+    --tw-prose-th-borders: var(--color-border-light);
+    --tw-prose-td-borders: var(--color-border-light);
+}
+.dark .prose {
+    --tw-prose-body: var(--color-text-dark);
+    --tw-prose-headings: var(--color-heading-dark);
+    --tw-prose-lead: var(--color-text-dark);
+    --tw-prose-links: var(--color-accent-dark);
+    --tw-prose-bold: var(--color-heading-dark);
+    --tw-prose-counters: var(--color-text-dark);
+    --tw-prose-bullets: var(--color-accent-dark);
+    --tw-prose-hr: var(--color-border-dark);
+    --tw-prose-quotes: var(--color-heading-dark);
+    --tw-prose-quote-borders: var(--color-accent-dark);
+    --tw-prose-captions: var(--color-text-dark);
+    --tw-prose-code: var(--color-heading-dark);
+    --tw-prose-th-borders: var(--color-border-dark);
+    --tw-prose-td-borders: var(--color-border-dark);
+}
+
+/* Inline code. Typography's defaults wrap code in literal backticks
+   (content: "`") which reads as broken text — most obvious inside tables.
+   Replace them with a warm chip that matches the .tag styling. */
+.prose :not(pre) > code::before,
+.prose :not(pre) > code::after {
+    content: none;
+}
+.prose :not(pre) > code {
+    padding: 0.12em 0.38em;
+    border-radius: 0.375rem;
+    font-weight: 500;
+    background-color: rgba(168, 81, 15, 0.09);
+    color: var(--color-accent-light);
+}
+.dark .prose :not(pre) > code {
+    background-color: rgba(192, 132, 252, 0.14);
+    color: var(--color-accent-dark);
+}
+
+/* Anchor jumps from the TOC must clear the fixed header (64px + breathing
+   room), otherwise the target heading lands underneath it. */
+.prose :where(h2, h3, h4, h5, h6) {
+    scroll-margin-top: 5.5rem;
+}
+
+/* Keyboard-only shortcut past the fixed nav (see BaseLayout). */
+.skip-link {
+    position: fixed;
+    top: 0.5rem;
+    left: 0.5rem;
+    z-index: 200;
+    padding: 0.5rem 0.9rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    color: var(--color-heading-light);
+    background-color: var(--color-card-light);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.15);
+    transform: translateY(-250%);
+    transition: transform var(--duration-fast) var(--ease-out);
+}
+.skip-link:focus {
+    transform: none;
+}
+.dark .skip-link {
+    color: var(--color-heading-dark);
+    background-color: var(--color-card-dark);
+}
+/* <main> receives focus when the skip link is used; no ring needed there. */
+.site-main:focus {
+    outline: none;
+}
+
 /* Scroll-reveal animation (driven by IntersectionObserver in BaseLayout) */
 /* TOC active section (set by post page reading script) */
 .toc-link.toc-active {
@@ -139,6 +230,13 @@
    <pre>) so they never move when the code scrolls horizontally. */
 .code-block {
     position: relative;
+    /* Match the rounded surfaces around it (cards 16px, tags pill); without
+       this the dark Shiki slab has hard square corners inside a soft card. */
+    border-radius: 0.75rem;
+    overflow: hidden;
+}
+pre.astro-code {
+    border-radius: 0.75rem;
 }
 pre.astro-code.code-enhanced > code {
     display: block;
@@ -257,20 +355,34 @@ pre.astro-code::-webkit-scrollbar-thumb:hover {
     transform: none;
 }
 
+/* Card hover, declared AFTER the reveal rule above on purpose: both selectors
+   have the same specificity, so the later declaration wins and one transition
+   list must cover the entrance (opacity/transform) *and* every hover change.
+   Two traps this fixes: the reveal rule used to override the component's
+   `transition-[transform,box-shadow]` utility, and Tailwind v4 animates the
+   `translate` property (not `transform`) for `hover:-translate-y-1`. */
+.card {
+    transition:
+        opacity 0.3s var(--ease-out),
+        transform 0.3s var(--ease-out),
+        translate var(--duration-normal) var(--ease-out),
+        box-shadow var(--duration-normal) var(--ease-out),
+        background-color var(--duration-normal) var(--ease-out);
+}
+
 /* ── View Transitions: layered motion hierarchy ─────────────────────
-   Only Main content animates; Header/Footer/Background stay put:
-     Background  .random-bg    → art-bg        slow crossfade 600ms
+   Only Main content animates; Header/Footer stay put:
      Header      .site-nav     → app-header     frozen
      Footer      .site-footer  → site-footer    frozen
      Main        .site-main    → main-content   old fades out, new materializes
    The old content leaves first (fast), then the new content materializes
-   piecewise — the background is the only layer that keeps changing. */
+   piecewise. */
 
 :root {
     --vt-content-out: 160ms;
 }
 
-.random-bg {
+.background {
     view-transition-name: art-bg;
 }
 .site-nav {
@@ -293,13 +405,6 @@ pre.astro-code::-webkit-scrollbar-thumb:hover {
 ::view-transition-old(site-footer),
 ::view-transition-new(site-footer) {
     animation: none !important;
-}
-
-/* Background: continuous slow crossfade. */
-::view-transition-group(art-bg),
-::view-transition-old(art-bg),
-::view-transition-new(art-bg) {
-    animation-duration: 600ms;
 }
 
 /* Main content: the old snapshot fades out fast; the new snapshot stays empty
@@ -349,8 +454,6 @@ pre.astro-code::-webkit-scrollbar-thumb:hover {
     ::view-transition-group(main-content),
     ::view-transition-old(main-content),
     ::view-transition-new(main-content),
-    ::view-transition-old(art-bg),
-    ::view-transition-new(art-bg),
     ::view-transition-group(app-header),
     ::view-transition-old(app-header),
     ::view-transition-new(app-header),
