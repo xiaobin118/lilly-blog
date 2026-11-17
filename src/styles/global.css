@@ -230,10 +230,13 @@
    <pre>) so they never move when the code scrolls horizontally. */
 .code-block {
     position: relative;
-    /* Match the rounded surfaces around it (cards 16px, tags pill); without
-       this the dark Shiki slab has hard square corners inside a soft card. */
+    /* Match the rounded surfaces around it (cards 16px, tags pill); the <pre>
+       keeps its own radius so the dark slab does not poke out of the corners.
+       No `overflow: hidden` here on purpose: it would create a block
+       formatting context, stop the <pre>'s 32px margin from collapsing
+       through the wrapper, and push the absolutely positioned "Copy" /
+       language labels 32px above the dark slab (invisible on the card). */
     border-radius: 0.75rem;
-    overflow: hidden;
 }
 pre.astro-code {
     border-radius: 0.75rem;
