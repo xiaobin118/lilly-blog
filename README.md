@@ -22,16 +22,23 @@ npm run preview  # 预览构建产物
 
 文章为 Markdown,存放在 `src/content/blog/*.md`(文件名即 URL slug)。
 
-**发布（TUI 菜单）:**
+**新增文章:**
 
 ```powershell
-.\UPDATE.ps1     # Windows
-./UPDATE.sh      # Linux / WSL
+.\UPDATE.ps1 .\path\to\article.md -Tags cpp,learning
 ```
 
-- 新文章 / 笔记：选 `.md` 文件，脚本补 `title/date/tags/type/topic/project`（已有 frontmatter 则保留）
-- 已有改动：勾选要发布的 blog / project 文件，只 `git add` 选中的
-- 构建验证 → commit → push；构建失败不会提交
+- 文件名需为英文/数字/连字符(用作 URL)
+- 无 frontmatter 时自动补 `title/date/tags`
+- 自动构建验证 → 提交 → 推送部署
+
+**更新已有文章**(直接编辑 `src/content/blog/*.md` 后):
+
+```powershell
+.\UPDATE.ps1
+```
+
+自动检测改动 → 构建验证 → 提交 → 推送。
 
 ## 部署
 

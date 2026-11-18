@@ -5,7 +5,7 @@ Astro 5 + Tailwind CSS 4 静态博客（TypeScript），部署在 GitHub Pages �
 ## 命令
 - `npm run check` — astro 类型检查
 - `npm run build` / `npm run dev` — 构建 / 开发
-- `.\UPDATE.ps1` / `./UPDATE.sh` — 发布 TUI：选文件、生成 frontmatter、构建、commit、push
+- `.\UPDATE.ps1` — 发布：自动 frontmatter（+ `-Type note -Topic "C++"`）、构建、commit、push
 - `git push origin main` — 触发 GitHub Actions 部署；只 commit 不 push，线上不会更新
 
 ## 内容
