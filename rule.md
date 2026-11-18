@@ -141,9 +141,11 @@ repo: https://github.com/... # 可选，必须是合法 URL
 
 1. 写/改内容文件（按 2–5 节）。
 2. `npm run build` —— **必须通过**，失败就修内容，不要绕过。
-3. 发布（[UPDATE.ps1](UPDATE.ps1)）：
-   - 单篇：`.\UPDATE.ps1 <file.md> -Type note -Topic "机器学习" -Tags machine-learning`
-   - 批量（已放进 `src/content/blog/`）：`.\UPDATE.ps1`
+3. 发布（TUI，按菜单操作）：
+   - Windows：`.\UPDATE.ps1`
+   - Linux / WSL：`./UPDATE.sh`
+   - 菜单选「发布新文章 / 笔记」或「发布已有 blog / project 改动」；脚本会构建验证 → 只 `git add` 选中的文件 → `commit` → `push origin main`。
+   - 只验证构建：`.\UPDATE.ps1 -Check` / `./UPDATE.sh --check`。
 4. 脚本会：构建验证 → `git add` → `commit` → `push origin main` → GitHub Actions 部署。
 5. **构建失败时脚本会中止，不会 commit/push**；不要手工跳过这步直接 `git push`。
 
