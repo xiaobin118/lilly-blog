@@ -106,6 +106,14 @@ git pull origin main  # 拉取并合并（= fetch + merge）
 git push origin main  # 推送本地提交到远端
 ```
 
+### 2.6 fork与PR
+```bash
+git remote add upstream <url>  # 添加上游仓库
+git fetch upstream              # 拉取上游仓库信息
+git merge upstream/main         # 合并上游 main 分支到本地
+git fork <url>                     # 在 GitHub 上 fork 仓库
+```
+
 ## 4. 发一篇笔记
 
 ```bash
