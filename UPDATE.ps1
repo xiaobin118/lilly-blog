@@ -141,9 +141,6 @@ function Publish-Changes {
         return
     }
 
-    & git add -A -- $paths
-    if ($LASTEXITCODE -ne 0) { Write-Host 'git add 失败。' -ForegroundColor Red; return }
-
     if ($paths.Count -eq 1) {
         $defaultMsg = "post: update $([IO.Path]::GetFileNameWithoutExtension($paths[0]))"
     } else {
@@ -152,9 +149,12 @@ function Publish-Changes {
     $msg = Ask 'commit message' $defaultMsg
 
     if ($DryRun) {
-        Write-Host "[dry-run] 跳过 git commit/push：$msg" -ForegroundColor Yellow
+        Write-Host "[dry-run] 跳过 git add/commit/push：$msg" -ForegroundColor Yellow
         return
     }
+
+    & git add -A -- $paths
+    if ($LASTEXITCODE -ne 0) { Write-Host 'git add 失败。' -ForegroundColor Red; return }
 
     & git commit -m $msg
     if ($LASTEXITCODE -ne 0) { Write-Host 'commit 失败（可能没有改动）。' -ForegroundColor Red; return }
@@ -282,13 +282,13 @@ function New-Article {
     $titleMatch = [regex]::Match($out, '(?m)^title:\s*"?([^"\r\n]+)"?\s*$')
     $titleForMsg = if ($titleMatch.Success) { $titleMatch.Groups[1].Value.Trim() } else { $slug }
 
-    & git add -- $target
-    if ($LASTEXITCODE -ne 0) { Write-Host 'git add 失败。' -ForegroundColor Red; return }
-
     if ($DryRun) {
-        Write-Host "[dry-run] 跳过 git commit：post: $titleForMsg" -ForegroundColor Yellow
+        Write-Host "[dry-run] 跳过 git add/commit：post: $titleForMsg" -ForegroundColor Yellow
         return
     }
+
+    & git add -- $target
+    if ($LASTEXITCODE -ne 0) { Write-Host 'git add 失败。' -ForegroundColor Red; return }
 
     & git commit -m "post: $titleForMsg"
     if ($LASTEXITCODE -ne 0) { Write-Host 'commit 失败（可能没有改动）。' -ForegroundColor Red; return }

@@ -217,11 +217,11 @@ type: $type"
     title_for_msg=$(sed -n 's/^title:[[:space:]]*//p' "$target" | head -1 | sed 's/^"//; s/"$//')
     [[ -z $title_for_msg ]] && title_for_msg=$slug
 
-    git add -- "$target" || return 1
     if (( DRY_RUN )); then
-        warn "[dry-run] 跳过 git commit：post: $title_for_msg"
+        warn "[dry-run] 跳过 git add/commit：post: $title_for_msg"
         return 0
     fi
+    git add -- "$target" || return 1
     git commit -m "post: $title_for_msg" || { err "commit 失败（可能没有改动）。"; return 1; }
     if ! push_main; then
         err "推送失败。可手动执行：git push origin main"
@@ -295,8 +295,6 @@ publish_changes() {
     local -a sel_paths=()
     for i in "${idx[@]}"; do sel_paths+=("${paths[$i]}"); done
 
-    git add -A -- "${sel_paths[@]}" || return 1
-
     local msg
     if ((${#sel_paths[@]} == 1)); then
         msg="post: update $(basename "${sel_paths[0]}" .md)"
@@ -306,10 +304,11 @@ publish_changes() {
     msg=$(ask "commit message" "$msg")
 
     if (( DRY_RUN )); then
-        warn "[dry-run] 跳过 git commit/push：$msg"
+        warn "[dry-run] 跳过 git add/commit/push：$msg"
         return 0
     fi
 
+    git add -A -- "${sel_paths[@]}" || return 1
     git commit -m "$msg" || { err "commit 失败。"; return 1; }
     if ! push_main; then
         err "推送失败。可手动执行：git push origin main"
